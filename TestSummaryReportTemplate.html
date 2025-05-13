@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Summary Report Template</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font */
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f7f6; /* Keeping a light background for the page */
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: #ffffff; /* White background for the report container */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative; /* Needed for absolute positioning of the logo */
+        }
+        h1, h2 {
+            color: #3d2682; /* Primary colour for headings */
+            margin-bottom: 15px;
+        }
+        h1 {
+            border-bottom: 2px solid #3d2682; /* Primary colour for the border */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center; /* Keeping centre for text-align is standard */
+        }
+        h2 {
+            cursor: pointer; /* Indicate that headings are clickable */
+            padding: 10px;
+            background-color: #3d2682; /* Primary colour for section headers background */
+            color: #ffffff; /* White text for section headers */
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h2:hover {
+            background-color: #2f1e6a; /* Slightly darker primary colour on hover */
+        }
+        .section-content {
+            margin-top: 15px;
+            padding-left: 15px;
+            border-left: 3px solid #eb595e; /* Accent colour for content border */
+            overflow: hidden; /* Hide content when collapsed */
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out; /* Smooth transition */
+            max-height: 1000px; /* Sufficiently large initial max-height */
+            opacity: 1;
+        }
+        .section-content.collapsed {
+            max-height: 0 !important; /* Added !important for certainty */
+            opacity: 0 !important; /* Added !important for certainty */
+            padding-left: 0;
+            border-left: none;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555; /* Keeping label colour neutral */
+        }
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus, input[type="date"]:focus, textarea:focus {
+            border-color: #3d2682; /* Primary colour on focus */
+            outline: none;
+            box-shadow: 0 0 5px rgba(61, 38, 130, 0.25); /* Shadow matching focus colour */
+        }
+        textarea {
+            min-height: 150px; /* Provide a reasonable default height */
+            resize: vertical; /* Allow vertical resizing */
+        }
+        .placeholder-text {
+            font-style: italic;
+            color: #888;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+            color: #ffffff; /* White colour for toggle icon */
+        }
+        .section-content.collapsed + h2 .toggle-icon {
+            transform: rotate(0deg); /* Arrow pointing right when collapsed */
+        }
+         h2 .toggle-icon {
+            transform: rotate(90deg); /* Arrow pointing down when expanded */
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 20px; /* Adjust as needed for spacing */
+            left: 20px; /* Adjust as needed for spacing */
+            width: 41px; /* Adjusted width based on provided SVG */
+            height: 32px; /* Adjusted height based on provided SVG */
+            z-index: 10; /* Ensure logo is above other content if needed */
+        }
+
+        .print-button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .print-button {
+            background-color: #eb595e; /* Accent colour for button */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .print-button:hover {
+            background-color: #d14a4f; /* Slightly darker accent colour on hover */
+        }
+
+        /* Style for the "No content" message in PDF */
+        .no-content-message {
+            font-style: italic;
+            color: #888;
+            margin-top: 10px;
+            padding-left: 5px;
+            /* Initially hidden in the HTML view */
+            display: none;
+        }
+
+        /* Flex container for top fields */
+        .top-fields {
+            display: flex;
+            gap: 20px; /* Space between fields */
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        .top-field-group {
+            flex: 1; /* Allow fields to grow and shrink */
+            min-width: 150px; /* Minimum width before wrapping */
+        }
+
+         .top-field-group label {
+            margin-bottom: 4px; /* Reduce margin below label */
+         }
+
+         .top-field-group input[type="text"],
+         .top-field-group input[type="date"] {
+            margin-bottom: 0; /* Remove bottom margin from inputs in this group */
+         }
+
+
+        /* Styling for print */
+        @media print {
+            body {
+                background-color: #fff; /* White background for printing */
+                padding: 20px; /* Keep padding on body */
+            }
+            .container {
+                box-shadow: none; /* No shadow in print */
+                margin: 0;
+                padding: 30px; /* Keep padding on container for content spacing */
+                max-width: none; /* Use full width */
+                position: static; /* Change container position to static in print */
+            }
+            h1 {
+                 border-bottom-colour: #3d2682 !important; /* Ensure primary colour border in print */
+                 color: #3d2682 !important; /* Ensure primary colour heading in print */
+                 margin-top: 0; /* Remove extra margin added previously */
+            }
+            h2 {
+                background-colour: #3d2682 !important; /* Ensure primary colour background in print */
+                color: #ffffff !important; /* Ensure white text in print */
+                cursor: default; /* No pointer cursor in print */
+                border-bottom: 1px solid #ccc; /* Add a subtle border */
+                margin-top: 20px;
+            }
+            .section-content {
+                max-height: none !important; /* Ensure all content is visible */
+                opacity: 1 !important;
+                display: block !important; /* Ensure content is displayed */
+                padding-left: 15px; /* Keep padding for content border */
+                border-left: 3px solid #eb595e !important; /* Ensure accent colour border in print */
+            }
+
+            /* Adjust padding/margin for empty sections in print */
+            .section-content:has(.no-content-message) {
+                 padding-top: 5px; /* Reduced padding at the top */
+                 padding-bottom: 5px; /* Reduced padding at the bottom */
+                 margin-top: 5px; /* Reduced margin at the top */
+                 margin-bottom: 5px; /* Reduced margin at the bottom */
+                 min-height: auto; /* Allow height to shrink */
+            }
+
+
+             .toggle-icon {
+                display: none; /* Hide toggle icons in print */
+            }
+            input[type="text"], input[type="date"], textarea {
+                border: none; /* Remove borders from inputs in print */
+                padding: 0;
+                margin-bottom: 5px; /* Adjust margin */
+            }
+            label {
+                font-weight: bold;
+                margin-bottom: 2px;
+            }
+            .placeholder-text {
+                 display: none; /* Hide placeholder text in print */
+            }
+             /* Ensure filled content is visible and formatted */
+            textarea:not(:empty), input[type="text"]:not(:empty), input[type="date"]:not(:empty) {
+                display: block; /* Ensure content is displayed */
+                white-space: pre-wrap; /* Preserve formatting */
+                word-wrap: break-word; /* Break long words */
+            }
+             .logo-container {
+                display: block; /* Make logo visible in print */
+                position: fixed; /* Change position to fixed in print */
+                top: 20px; /* Position from the top of the viewport */
+                left: 20px; /* Position from the left of the viewport */
+                width: 41px; /* Maintain size */
+                height: 32px; /* Maintain size */
+                z-index: 10; /* Ensure logo is above other content if needed */
+            }
+            .print-button-container {
+                display: none; /* Hide the print button container in print */
+            }
+
+            /* Ensure top fields are displayed correctly in print */
+            .top-fields {
+                 display: flex; /* Keep flex display */
+                 gap: 20px; /* Keep gap */
+                 margin-bottom: 20px; /* Keep margin */
+                 flex-wrap: wrap; /* Keep wrapping */
+            }
+
+            .top-field-group {
+                 flex: 1; /* Keep flex grow/shrink */
+                 min-width: 150px; /* Keep min width */
+            }
+
+             .top-field-group label {
+                margin-bottom: 4px; /* Keep reduced margin */
+             }
+
+             .top-field-group input[type="text"],
+             .top-field-group input[type="date"] {
+                margin-bottom: 0; /* Keep no bottom margin */
+             }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+         <div class="logo-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="41" height="32" viewBox="0 0 41 32" fill="none">
+                <path d="M8.06592 19.9669H16.132V27.9669C16.132 30.1943 14.3264 32 12.099 32C9.87158 32 8.06592 30.1943 8.06592 27.9669V19.9669Z" fill="#3D2683"/>
+                <path d="M8.06592 4.03306C8.06592 1.80566 9.87158 0 12.099 0C14.3264 0 16.132 1.80566 16.132 4.03306V11.9008H8.06592V4.03306Z" fill="#3D2683"/>
+                <path d="M24.1983 19.9669H32.2644V27.9669C32.2644 30.1943 30.4587 32 28.2313 32C26.0039 32 24.1983 30.1943 24.1983 27.9669V19.9669Z" fill="#EB595E"/>
+                <path d="M24.1983 4.03306C24.1983 1.80566 26.0039 0 28.2313 0C30.4587 0 32.2644 1.80566 32.2644 4.03306V11.9008H24.1983V4.03306Z" fill="#EB595E"/>
+                <path d="M32.2644 19.9669V11.9008L36.2977 11.9008C38.5251 11.9008 40.3308 13.7065 40.3308 15.9339C40.3308 18.1613 38.5251 19.9669 36.2977 19.9669H32.2644Z" fill="#EB595E"/>
+                <path d="M4.03306 19.9669C1.80566 19.9669 -2.65615e-08 18.1613 0 15.9339C2.65615e-08 13.7065 1.80566 11.9008 4.03306 11.9008L8.06592 11.9008V19.9669H4.03306Z" fill="#3D2683"/>
+                <path d="M16.132 11.9008H24.1983V19.9669H16.132V11.9008Z" fill="#EB595E"/>
+                </svg>
+            </div>
+
+        <h1>Test Summary Report</h1>
+
+        <div class="top-fields">
+            <div class="top-field-group">
+                <label for="reportDate">Date:</label>
+                <input type="date" id="reportDate">
+            </div>
+
+            <div class="top-field-group">
+                <label for="releaseVersion">Release Version:</label>
+                <input type="text" id="releaseVersion" value="[Insert Release Version Number/Name]">
+            </div>
+
+            <div class="top-field-group">
+                <label for="preparedBy">Prepared By:</label>
+                <input type="text" id="preparedBy" value="[Your Name/Team Name]">
+            </div>
+            </div>
+
+        <h2 class="section-header" data-target="functionalRisksContent">1. Functional Risks <span class="toggle-icon">&#9660;</span></h2>
+        <div id="functionalRisksContent" class="section-content">
+            <label>Identified Risks:</label>
+            <textarea class="risk-input" placeholder="List high-level functional risks, e.g., 'Dependency on external service causing occasional delays.'"></textarea>
+            <label>Overall Functional Stability:</label>
+            <textarea class="risk-input" placeholder="Summarise overall stability, e.g., 'Core functionality is stable; minor issues exist in edge cases.'"></textarea>
+             <p class="no-content-message"></p> </div>
+
+        <h2 class="section-header" data-target="securityConcernsContent">2. Security Concerns <span class="toggle-icon">&#9660;</span></h2>
+        <div id="securityConcernsContent" class="section-content">
+             <label>Identified Concerns:</label>
+            <textarea class="security-input" placeholder="List high-level security concerns, e.g., 'Low-severity vulnerability identified and mitigated.'"></textarea>
+            <label>Security Posture:</label>
+            <textarea class="security-input" placeholder="Summarise security status, e.g., 'No critical vulnerabilities found; adheres to security standards.'"></textarea>
+             <p class="no-content-message"></p> </div>
+
+        <h2 class="section-header" data-target="performanceImprovementsContent">3. Performance Improvements <span class="toggle-icon">&#9660;</span></h2>
+        <div id="performanceImprovementsContent" class="section-content">
+            <label>Key Improvements:</label>
+            <textarea class="performance-input" placeholder="List key performance improvements, e.g., 'Improved dashboard loading time by 15%.'"></textarea>
+        <label>Overall Performance Summary:</label>
+            <textarea class="performance-input" placeholder="Summarise performance, e.g., 'Overall performance meets benchmarks and is stable under load.'"></textarea>
+             <p class="no-content-message"></p> </div>
+
+        <div class="print-button-container">
+            <button class="print-button" onclick="window.print()">Save as PDF</button>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM fully loaded and parsed"); // Log when DOM is ready
+
+            const sectionHeaders = document.querySelectorAll('.section-header');
+            console.log("Found section headers:", sectionHeaders.length); // Log number of headers found
+
+            const releaseVersionInput = document.getElementById('releaseVersion');
+            // Removed introTextarea and conclusionTextarea as these sections are removed
+
+
+            // Function to update release version placeholders (removed as sections are gone)
+            // function updateReleaseVersionPlaceholders() { ... }
+
+            // Removed event listener and initial call for updateReleaseVersionPlaceholders
+
+
+            // Add click listeners to section headers for collapsing
+            sectionHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    console.log('Header clicked:', this.textContent); // Log to check if click is registered
+                    const targetId = this.dataset.target;
+                    const targetContent = document.getElementById(targetId);
+                    const toggleIcon = this.querySelector('.toggle-icon');
+
+                    if (targetContent) { // Check if target content element exists
+                        console.log('Target content found:', targetContent.id); // Log if target content is found
+                        // Toggle the 'collapsed' class
+                        targetContent.classList.toggle('collapsed');
+                        console.log('Class toggled. Current classes:', targetContent.classList); // Log classes after toggle
+
+                        // Toggle the arrow icon direction
+                        if (targetContent.classList.contains('collapsed')) {
+                            if(toggleIcon) toggleIcon.innerHTML = '&#9658;'; // Right arrow
+                        } else {
+                            if(toggleIcon) toggleIcon.innerHTML = '&#9660;'; // Down arrow
+                        }
+                    } else {
+                        console.error('Target content not found for:', targetId); // Log error if target content is not found
+                    }
+                });
+            });
+
+            // Function to check if a section's inputs have actual content (not just placeholder)
+            function hasActualContent(sectionId) {
+                const section = document.getElementById(sectionId);
+                if (!section) return false; // Return false if section doesn't exist
+
+                const inputs = section.querySelectorAll('input[type="text"], input[type="date"], textarea');
+                let hasContent = false;
+                inputs.forEach(input => {
+                    // Check if the trimmed value is not empty AND is different from the trimmed placeholder
+                    if (input.value.trim() !== '' && (input.placeholder === undefined || input.value.trim() !== input.placeholder.trim())) {
+                         hasContent = true;
+                    }
+                });
+                 return hasContent;
+            }
+
+            // Initial check and collapse empty sections on load
+            sectionHeaders.forEach(header => {
+                const targetId = header.dataset.target;
+                 const targetContent = document.getElementById(targetId);
+
+                // All remaining sections (Functional Risks, Security, Performance) should collapse if empty
+                if (targetContent) {
+                     if (!hasActualContent(targetId)) { // Check if section *doesn't* have actual content
+                        targetContent.classList.add('collapsed');
+                         const toggleIcon = header.querySelector('.toggle-icon');
+                         if(toggleIcon) toggleIcon.innerHTML = '&#9658;'; // Right arrow
+                         console.log(`Initial collapse: ${targetId} is empty and collapsed.`); // Log initial collapse
+                    }
+                }
+            });
+
+             // Add event listeners to input fields to check section emptiness on input
+            document.querySelectorAll('.section-content textarea, .section-content input[type="text"], .section-content input[type="date"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    // Find the parent section content div
+                    let parentSectionContent = this.closest('.section-content');
+                    if (parentSectionContent) {
+                        let header = document.querySelector(`.section-header[data-target="${parentSectionContent.id}"]`);
+                        if (header) {
+                            if (!hasActualContent(parentSectionContent.id)) {
+                                // If section becomes empty, collapse it (optional, might be annoying)
+                                // parentSectionContent.classList.add('collapsed');
+                                // header.querySelector('.toggle-icon').innerHTML = '&#9658;';
+                            } else {
+                                // If content is added, ensure it's not collapsed
+                                parentSectionContent.classList.remove('collapsed');
+                                const toggleIcon = header.querySelector('.toggle-icon');
+                                if(toggleIcon) toggleIcon.innerHTML = '&#9660;';
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Logic before printing
+            window.addEventListener('beforeprint', () => {
+                console.log("Before print event triggered."); // Log before print
+
+                document.querySelectorAll('.section-content').forEach(content => {
+                    // Ensure all sections are expanded for printing
+                    content.classList.remove('collapsed');
+                    content.style.maxHeight = 'none'; // Ensure max-height is removed for print
+
+                    const sectionId = content.id;
+                    const messageElement = content.querySelector('.no-content-message');
+                    const inputs = content.querySelectorAll('input, textarea');
+
+                    // Only process the relevant sections (Functional Risks, Security, Performance)
+                    if (['functionalRisksContent', 'securityConcernsContent', 'performanceImprovementsContent'].includes(sectionId)) {
+                        if (!hasActualContent(sectionId)) { // Check if section has NO actual content
+                            let sectionName = '';
+                            if (sectionId === 'functionalRisksContent') sectionName = 'Functional Risks';
+                            else if (sectionId === 'securityConcernsContent') sectionName = 'Security Concerns';
+                            else if (sectionId === 'performanceImprovementsContent') sectionName = 'Performance Improvements';
+
+                            const releaseVersion = releaseVersionInput ? releaseVersionInput.value.trim() : '[Release Version]';
+                            const message = `No ${sectionName} identified for Release ${releaseVersion}.`;
+
+                            // Set message text and make it visible
+                            if (messageElement) {
+                                messageElement.textContent = message;
+                                messageElement.style.display = 'block';
+                                console.log(`Added "No content" message to ${sectionId}`); // Log message addition
+                            }
+
+                             // Hide existing inputs/textareas in this empty section during print
+                             inputs.forEach(input => {
+                                input.style.display = 'none';
+                             });
+                        } else {
+                            // If section *does* have content, ensure message is hidden and inputs are visible
+                            if (messageElement) {
+                                messageElement.style.display = 'none';
+                            }
+                             inputs.forEach(input => {
+                                input.style.display = ''; // Revert to default display
+                             });
+                        }
+                    }
+                });
+            });
+
+            // Logic after printing
+            window.addEventListener('afterprint', () => {
+                console.log("After print event triggered."); // Log after print
+
+                 document.querySelectorAll('.section-content').forEach(content => {
+                    // Remove added messages and restore display
+                    const messageElement = content.querySelector('.no-content-message');
+                    const inputs = content.querySelectorAll('input, textarea');
+
+                    if (messageElement) {
+                        messageElement.style.display = 'none'; // Hide the message again
+                        console.log(`Removed "No content" message from ${content.id}`); // Log message removal
+                    }
+                     inputs.forEach(input => {
+                        input.style.display = ''; // Restore display of inputs/textareas
+                     });
+
+                    // Restore max-height for collapsing functionality
+                    content.style.maxHeight = '1000px'; // Or whatever your default expanded max-height is
+
+                });
+
+                // Re-apply collapsed state after printing
+                sectionHeaders.forEach(header => {
+                    const targetId = header.dataset.target;
+                    const targetContent = document.getElementById(targetId);
+                     // Re-collapse sections that were empty initially (all sections now collapse if empty)
+                     if (targetContent) {
+                        if (!hasActualContent(targetId)) { // Check if section still has NO actual content
+                            targetContent.classList.add('collapsed');
+                             const toggleIcon = header.querySelector('.toggle-icon');
+                             if(toggleIcon) toggleIcon.innerHTML = '&#9658;'; // Right arrow
+                             console.log(`Re-collapsed ${targetId} after print.`); // Log re-collapse
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
