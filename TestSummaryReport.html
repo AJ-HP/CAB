@@ -331,7 +331,7 @@
 
         <h2 class="section-header" data-target="conclusionContent">4. Conclusion <span class="toggle-icon">&#9660;</span></h2>
         <div id="conclusionContent" class="section-content">
-            <textarea id="conclusionText">Based on the comprehensive testing summarised in this report, Release [Insert Release Version Number/Name] is deemed ready for deployment. All identified critical functional risks and security concerns have been addressed or accepted with appropriate mitigation strategies in place. Performance testing indicates the release meets or exceeds established benchmarks. This report provides the necessary information for the Senior Leadership Team to provide final consent for the release.</textarea>
+            <textarea id="conclusionText">Based on the comprehensive testing summarised in this report, Release [Insert Release Version Number/Name] is deemed ready for deployment. All critical functional risks and security concerns have been addressed or accepted with appropriate mitigation strategies in place. Performance testing indicates the release meets or exceeds established benchmarks. This report provides the necessary information for the Senior Leadership Team to provide final consent for the release.</textarea>
              <p class="no-content-message"></p> </div> <div class="print-button-container">
             <button class="print-button" onclick="window.print()">Save as PDF</button>
         </div>
@@ -346,38 +346,51 @@
             console.log("Found section headers:", sectionHeaders.length); // Log number of headers found
 
             const releaseVersionInput = document.getElementById('releaseVersion');
-            const conclusionTextarea = document.getElementById('conclusionText'); // Added back conclusionTextarea
+            const conclusionTextarea = document.getElementById('conclusionText');
 
 
             // Function to update release version placeholders
             function updateReleaseVersionPlaceholders() {
-                // Check if releaseVersionInput exists before accessing its value
+                console.log("updateReleaseVersionPlaceholders called");
                 const version = releaseVersionInput ? releaseVersionInput.value.trim() : '[Insert Release Version Number/Name]';
-                const conclusionPlaceholder = "[Insert Release Version Number/Name]";
+                console.log("Release version input value:", releaseVersionInput ? releaseVersionInput.value : 'null');
+                console.log("Trimmed version:", version);
 
-                // Update Conclusion textarea if it exists
+                // Use a regex to find and replace the version number in the conclusion text
                 if (conclusionTextarea) {
                     let currentConclusionText = conclusionTextarea.value;
-                     // This part is simplified to just replace the placeholder if it exists
-                     if (currentConclusionText.includes(conclusionPlaceholder)) {
-                        conclusionTextarea.value = currentConclusionText.replace(conclusionPlaceholder, version);
+                    console.log("Current conclusion text:", currentConclusionText);
+
+                    // Regex to find "Release [something]" where [something] can be the placeholder or a version number
+                    const versionRegex = /Release\s+\[Insert Release Version Number\/Name\]|Release\s+[\w.-]+/i;
+
+                    if (versionRegex.test(currentConclusionText)) {
+                        conclusionTextarea.value = currentConclusionText.replace(versionRegex, `Release ${version}`);
+                        console.log("Conclusion text after replacing version:", conclusionTextarea.value);
+                    } else {
+                        // Fallback: if the pattern isn't found, just log a warning
+                        console.warn("Release version pattern not found in conclusion text.");
                     }
-                     // Note: We are not attempting to replace an already inserted version in the conclusion
-                     // with this simplified generic text. The user can manually edit if needed.
+                } else {
+                    console.error("Conclusion textarea not found.");
                 }
             }
 
             // Add event listener to update placeholders when release version input changes, only if input exists
             if (releaseVersionInput) {
                  releaseVersionInput.addEventListener('input', updateReleaseVersionPlaceholders);
+                 console.log("Event listener added to releaseVersionInput");
+            } else {
+                 console.error("releaseVersionInput not found, event listener not added.");
             }
 
 
             // Initial update on page load, only if necessary elements exist
-            if (releaseVersionInput && conclusionTextarea) { // Check for releaseVersionInput and conclusionTextarea
+            if (releaseVersionInput && conclusionTextarea) {
                 updateReleaseVersionPlaceholders();
+                console.log("Initial updateReleaseVersionPlaceholders called.");
             } else {
-                 console.error("Required input elements for placeholder update not found on DOM load."); // Log if elements are missing
+                 console.error("Required input elements for initial placeholder update not found on DOM load."); // Log if elements are missing
             }
 
 
