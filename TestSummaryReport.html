@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Summary Report</title>
+    <title>Test Summary Report Template</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -177,11 +177,13 @@
                 padding: 30px; /* Keep padding on container for content spacing */
                 max-width: none; /* Use full width */
                 position: static; /* Change container position to static in print */
+                background-color: #fff; /* White background in print */
             }
             h1 {
                  border-bottom-colour: #3d2682 !important; /* Ensure primary colour border in print */
                  color: #3d2682 !important; /* Ensure primary colour heading in print */
                  margin-top: 0; /* Remove extra margin added previously */
+                 text-shadow: none; /* Remove text shadow in print */
             }
             h2 {
                 background-colour: #3d2682 !important; /* Ensure primary colour background in print */
@@ -189,6 +191,7 @@
                 cursor: default; /* No pointer cursor in print */
                 border-bottom: 1px solid #ccc; /* Add a subtle border */
                 margin-top: 20px;
+                box-shadow: none; /* Remove neumorphic shadow in print */
             }
             .section-content {
                 max-height: none !important; /* Ensure all content is visible */
@@ -196,6 +199,7 @@
                 display: block !important; /* Ensure content is displayed */
                 padding-left: 15px; /* Keep padding for content border */
                 border-left: 3px solid #eb595e !important; /* Ensure accent colour border in print */
+                 box-shadow: none; /* Remove neumorphic shadow in print */
             }
 
             /* Adjust padding/margin for empty sections in print */
@@ -215,6 +219,7 @@
                 border: none; /* Remove borders from inputs in print */
                 padding: 0;
                 margin-bottom: 5px; /* Adjust margin */
+                box-shadow: none; /* Remove neumorphic shadow in print */
             }
             label {
                 font-weight: bold;
@@ -224,19 +229,20 @@
                  display: none; /* Hide placeholder text in print */
             }
              /* Ensure filled content is visible and formatted */
-            textarea:not(:empty), input[type="text"]:not(:empty), input[type="date"]:not(:empty) {
+            textarea:not(:empty), input[type="text"]:not(:empty), input[type="date']:not(:empty) {
                 display: block; /* Ensure content is displayed */
                 white-space: pre-wrap; /* Preserve formatting */
                 word-wrap: break-word; /* Break long words */
             }
              .logo-container {
                 display: block; /* Make logo visible in print */
-                position: fixed; /* Change position to fixed in print */
+                position: fixed; /* Keep position fixed in print */
                 top: 20px; /* Position from the top of the viewport */
                 left: 20px; /* Position from the left of the viewport */
                 width: 41px; /* Maintain size */
                 height: 32px; /* Maintain size */
                 z-index: 10; /* Ensure logo is above other content if needed */
+                 box-shadow: none; /* Remove neumorphic shadow in print */
             }
             .print-button-container {
                 display: none; /* Hide the print button container in print */
@@ -323,7 +329,10 @@
             <textarea class="performance-input" placeholder="Summarise performance, e.g., 'Overall performance meets benchmarks and is stable under load.'"></textarea>
              <p class="no-content-message"></p> </div>
 
-        <div class="print-button-container">
+        <h2 class="section-header" data-target="conclusionContent">4. Conclusion <span class="toggle-icon">&#9660;</span></h2>
+        <div id="conclusionContent" class="section-content">
+            <textarea id="conclusionText">Based on the comprehensive testing summarised in this report, Release [Insert Release Version Number/Name] is deemed ready for deployment. All identified critical functional risks and security concerns have been addressed or accepted with appropriate mitigation strategies in place. Performance testing indicates the release meets or exceeds established benchmarks. This report provides the necessary information for the Senior Leadership Team to provide final consent for the release.</textarea>
+             <p class="no-content-message"></p> </div> <div class="print-button-container">
             <button class="print-button" onclick="window.print()">Save as PDF</button>
         </div>
 
@@ -337,13 +346,39 @@
             console.log("Found section headers:", sectionHeaders.length); // Log number of headers found
 
             const releaseVersionInput = document.getElementById('releaseVersion');
-            // Removed introTextarea and conclusionTextarea as these sections are removed
+            const conclusionTextarea = document.getElementById('conclusionText'); // Added back conclusionTextarea
 
 
-            // Function to update release version placeholders (removed as sections are gone)
-            // function updateReleaseVersionPlaceholders() { ... }
+            // Function to update release version placeholders
+            function updateReleaseVersionPlaceholders() {
+                // Check if releaseVersionInput exists before accessing its value
+                const version = releaseVersionInput ? releaseVersionInput.value.trim() : '[Insert Release Version Number/Name]';
+                const conclusionPlaceholder = "[Insert Release Version Number/Name]";
 
-            // Removed event listener and initial call for updateReleaseVersionPlaceholders
+                // Update Conclusion textarea if it exists
+                if (conclusionTextarea) {
+                    let currentConclusionText = conclusionTextarea.value;
+                     // This part is simplified to just replace the placeholder if it exists
+                     if (currentConclusionText.includes(conclusionPlaceholder)) {
+                        conclusionTextarea.value = currentConclusionText.replace(conclusionPlaceholder, version);
+                    }
+                     // Note: We are not attempting to replace an already inserted version in the conclusion
+                     // with this simplified generic text. The user can manually edit if needed.
+                }
+            }
+
+            // Add event listener to update placeholders when release version input changes, only if input exists
+            if (releaseVersionInput) {
+                 releaseVersionInput.addEventListener('input', updateReleaseVersionPlaceholders);
+            }
+
+
+            // Initial update on page load, only if necessary elements exist
+            if (releaseVersionInput && conclusionTextarea) { // Check for releaseVersionInput and conclusionTextarea
+                updateReleaseVersionPlaceholders();
+            } else {
+                 console.error("Required input elements for placeholder update not found on DOM load."); // Log if elements are missing
+            }
 
 
             // Add click listeners to section headers for collapsing
@@ -393,8 +428,8 @@
                 const targetId = header.dataset.target;
                  const targetContent = document.getElementById(targetId);
 
-                // All remaining sections (Functional Risks, Security, Performance) should collapse if empty
-                if (targetContent) {
+                // Only collapse Functional Risks, Security, and Performance if empty
+                if (['functionalRisksContent', 'securityConcernsContent', 'performanceImprovementsContent'].includes(targetId) && targetContent) {
                      if (!hasActualContent(targetId)) { // Check if section *doesn't* have actual content
                         targetContent.classList.add('collapsed');
                          const toggleIcon = header.querySelector('.toggle-icon');
@@ -412,15 +447,18 @@
                     if (parentSectionContent) {
                         let header = document.querySelector(`.section-header[data-target="${parentSectionContent.id}"]`);
                         if (header) {
-                            if (!hasActualContent(parentSectionContent.id)) {
-                                // If section becomes empty, collapse it (optional, might be annoying)
-                                // parentSectionContent.classList.add('collapsed');
-                                // header.querySelector('.toggle-icon').innerHTML = '&#9658;';
-                            } else {
-                                // If content is added, ensure it's not collapsed
-                                parentSectionContent.classList.remove('collapsed');
-                                const toggleIcon = header.querySelector('.toggle-icon');
-                                if(toggleIcon) toggleIcon.innerHTML = '&#9660;';
+                            // Only toggle collapse for the relevant sections
+                            if (['functionalRisksContent', 'securityConcernsContent', 'performanceImprovementsContent'].includes(parentSectionContent.id)) {
+                                if (!hasActualContent(parentSectionContent.id)) {
+                                    // If section becomes empty, collapse it (optional, might be annoying)
+                                    // parentSectionContent.classList.add('collapsed');
+                                    // header.querySelector('.toggle-icon').innerHTML = '&#9658;';
+                                } else {
+                                    // If content is added, ensure it's not collapsed
+                                    parentSectionContent.classList.remove('collapsed');
+                                    const toggleIcon = header.querySelector('.toggle-icon');
+                                    if(toggleIcon) toggleIcon.innerHTML = '&#9660;';
+                                }
                             }
                         }
                     }
@@ -440,37 +478,54 @@
                     const messageElement = content.querySelector('.no-content-message');
                     const inputs = content.querySelectorAll('input, textarea');
 
-                    // Only process the relevant sections (Functional Risks, Security, Performance)
-                    if (['functionalRisksContent', 'securityConcernsContent', 'performanceImprovementsContent'].includes(sectionId)) {
-                        if (!hasActualContent(sectionId)) { // Check if section has NO actual content
-                            let sectionName = '';
-                            if (sectionId === 'functionalRisksContent') sectionName = 'Functional Risks';
-                            else if (sectionId === 'securityConcernsContent') sectionName = 'Security Concerns';
-                            else if (sectionId === 'performanceImprovementsContent') sectionName = 'Performance Improvements';
+                    // Only process the relevant sections (Functional Risks, Security, Performance, Conclusion)
+                    if (['functionalRisksContent', 'securityConcernsContent', 'performanceImprovementsContent', 'conclusionContent'].includes(sectionId)) {
+                         // For Conclusion, always show content if available, otherwise show "No content" message
+                         if (sectionId === 'conclusionContent') {
+                             if (!hasActualContent(sectionId)) {
+                                 const releaseVersion = releaseVersionInput ? releaseVersionInput.value.trim() : '[Release Version]';
+                                 const message = `No Conclusion provided for Release ${releaseVersion}.`;
+                                 if (messageElement) {
+                                    messageElement.textContent = message;
+                                    messageElement.style.display = 'block';
+                                 }
+                                 inputs.forEach(input => { input.style.display = 'none'; });
+                             } else {
+                                 if (messageElement) messageElement.style.display = 'none';
+                                 inputs.forEach(input => { input.style.display = ''; });
+                             }
+                         } else {
+                             // For other sections, show "No content" message if empty
+                             if (!hasActualContent(sectionId)) { // Check if section has NO actual content
+                                let sectionName = '';
+                                if (sectionId === 'functionalRisksContent') sectionName = 'Functional Risks';
+                                else if (sectionId === 'securityConcernsContent') sectionName = 'Security Concerns';
+                                else if (sectionId === 'performanceImprovementsContent') sectionName = 'Performance Improvements';
 
-                            const releaseVersion = releaseVersionInput ? releaseVersionInput.value.trim() : '[Release Version]';
-                            const message = `No ${sectionName} identified for Release ${releaseVersion}.`;
+                                const releaseVersion = releaseVersionInput ? releaseVersionInput.value.trim() : '[Release Version]';
+                                const message = `No ${sectionName} identified for Release ${releaseVersion}.`;
 
-                            // Set message text and make it visible
-                            if (messageElement) {
-                                messageElement.textContent = message;
-                                messageElement.style.display = 'block';
-                                console.log(`Added "No content" message to ${sectionId}`); // Log message addition
+                                // Set message text and make it visible
+                                if (messageElement) {
+                                    messageElement.textContent = message;
+                                    messageElement.style.display = 'block';
+                                    console.log(`Added "No content" message to ${sectionId}`); // Log message addition
+                                }
+
+                                 // Hide existing inputs/textareas in this empty section during print
+                                 inputs.forEach(input => {
+                                    input.style.display = 'none';
+                                 });
+                            } else {
+                                // If section *does* have content, ensure message is hidden and inputs are visible
+                                if (messageElement) {
+                                    messageElement.style.display = 'none';
+                                }
+                                 inputs.forEach(input => {
+                                    input.style.display = ''; // Revert to default display
+                                 });
                             }
-
-                             // Hide existing inputs/textareas in this empty section during print
-                             inputs.forEach(input => {
-                                input.style.display = 'none';
-                             });
-                        } else {
-                            // If section *does* have content, ensure message is hidden and inputs are visible
-                            if (messageElement) {
-                                messageElement.style.display = 'none';
-                            }
-                             inputs.forEach(input => {
-                                input.style.display = ''; // Revert to default display
-                             });
-                        }
+                         }
                     }
                 });
             });
@@ -501,8 +556,8 @@
                 sectionHeaders.forEach(header => {
                     const targetId = header.dataset.target;
                     const targetContent = document.getElementById(targetId);
-                     // Re-collapse sections that were empty initially (all sections now collapse if empty)
-                     if (targetContent) {
+                     // Re-collapse sections that were empty initially (only Functional Risks, Security, Performance)
+                     if (['functionalRisksContent', 'securityConcernsContent', 'performanceImprovementsContent'].includes(targetId) && targetContent) {
                         if (!hasActualContent(targetId)) { // Check if section still has NO actual content
                             targetContent.classList.add('collapsed');
                              const toggleIcon = header.querySelector('.toggle-icon');
