@@ -152,6 +152,15 @@
             display: none;
         }
 
+        /* Styles for "N/A" content in print */
+        .print-na-input {
+            border: none !important;
+            background-color: transparent !important;
+            box-shadow: none !important;
+            color: #888 !important;
+            font-style: italic;
+        }
+
         /* Flex container for top fields */
         .top-fields {
             display: flex;
@@ -226,9 +235,7 @@
                 display: none; /* Hide toggle icons in print */
             }
             input[type="text"], input[type="date"], textarea {
-                border: none; /* Remove borders from inputs in print */
-                padding: 0;
-                margin-bottom: 5px; /* Adjust margin */
+                /* Removed print-specific border/padding/margin here, handled by .print-na-input or default */
                 box-shadow: none; /* Remove neumorphic shadow in print */
             }
             label {
@@ -341,7 +348,7 @@
 
         <h2 class="section-header" data-target="conclusionContent">4. Conclusion <span class="toggle-icon">&#9660;</span></h2>
         <div id="conclusionContent" class="section-content">
-            <textarea id="conclusionText">Based on testing in the Test environment, QA approves Release [Insert Release Version Number/Name] for Production deployment, provided UAT is successful and signed off, automated tests pass (with manual checks for failures), and deployment to Demo is successful and verified.</textarea>
+            <textarea id="conclusionText">Based on the comprehensive testing summarised in this report, Release [Insert Release Version Number/Name] is deemed ready for deployment. All critical functional risks and security concerns have been addressed or accepted with appropriate mitigation strategies in place. Performance testing indicates the release meets or exceeds established benchmarks. This report provides the necessary information for the Senior Leadership Team to provide final consent for the release.</textarea>
              <p class="no-content-message"></p> </div> <div class="button-container">
             <button class="report-button" onclick="window.print()"><i class="fas fa-file-pdf"></i> Save as PDF</button>
             <button class="report-button" onclick="window.open('https://github.com/AJ-HP/CAB/issues', '_blank')"><i class="fas fa-bug"></i> Feedback</button>
@@ -447,6 +454,14 @@
                 });
             });
 
+            // Function to check if an individual input/textarea has actual content (not just placeholder)
+            function isInputActuallyEmpty(inputElement) {
+                if (!inputElement) return true; // Treat non-existent input as empty
+                const value = inputElement.value.trim();
+                const placeholder = inputElement.placeholder ? inputElement.placeholder.trim() : '';
+                return value === '' || value === placeholder;
+            }
+
             // Function to check if a section's inputs have actual content (not just placeholder)
             function hasActualContent(sectionId) {
                 const section = document.getElementById(sectionId);
@@ -455,12 +470,9 @@
                 const inputs = section.querySelectorAll('input[type="text"], input[type="date"], textarea');
                 let hasContent = false;
                 inputs.forEach(input => {
-                    // Check if the trimmed value is not empty AND is different from the trimmed placeholder
-                    // For text inputs and textareas, also check if the current value is the placeholder text
-                     const isPlaceholder = input.placeholder && input.value.trim() === input.placeholder.trim();
-                     if (input.value.trim() !== '' && !isPlaceholder) {
+                    if (!isInputActuallyEmpty(input)) {
                          hasContent = true;
-                     }
+                    }
                 });
                  return hasContent;
             }
@@ -518,56 +530,62 @@
 
                     const sectionId = content.id;
                     const messageElement = content.querySelector('.no-content-message');
-                    const inputs = content.querySelectorAll('input, textarea');
+                    const inputs = content.querySelectorAll('input[type="text"], textarea'); // Only text/textarea for N/A logic
 
-                    // Only process the relevant sections (Functional Risks, Security, Performance, Conclusion)
+                    let sectionHadAnyActualContent = false; // Flag to track if the *entire section* had any actual content
+
+                    inputs.forEach(input => {
+                        if (isInputActuallyEmpty(input)) {
+                            // If individual input is empty, set N/A and style for print
+                            input._originalValue = input.value; // Store original value
+                            input._originalDisplay = input.style.display; // Store original display
+                            input._originalReadOnly = input.readOnly; // Store original readOnly state
+                            input._originalBorder = input.style.border;
+                            input._originalBgColor = input.style.backgroundColor;
+                            input._originalBoxShadow = input.style.boxShadow;
+                            input._originalColor = input.style.color;
+
+                            input.value = "N/A";
+                            input.readOnly = true;
+                            input.classList.add('print-na-input'); // Add class for N/A styling
+                            input.style.display = ''; // Ensure it's visible if it was hidden
+                        } else {
+                            sectionHadAnyActualContent = true; // Mark section as having content
+                            // Ensure it's not read-only or styled as N/A from a previous print
+                            input.readOnly = false;
+                            input.classList.remove('print-na-input');
+                            input.style.display = ''; // Ensure it's visible
+                        }
+                    });
+
+                    // Handle the main section's "No content" message if the *entire section* is empty
                     if (['functionalRisksContent', 'securityConcernsContent', 'performanceImprovementsContent', 'conclusionContent'].includes(sectionId)) {
-                         // For Conclusion, always show content if available, otherwise show "No content" message
-                         if (sectionId === 'conclusionContent') {
-                             if (!hasActualContent(sectionId)) {
-                                 const releaseVersion = releaseVersionInput ? releaseVersionInput.value.trim() : '[Release Version]';
-                                 const message = `No Conclusion provided for Release ${releaseVersion}.`;
-                                 if (messageElement) {
-                                    messageElement.textContent = message;
-                                    messageElement.style.display = 'block';
-                                 }
-                                 inputs.forEach(input => { input.style.display = 'none'; });
-                             } else {
-                                 if (messageElement) messageElement.style.display = 'none';
-                                 inputs.forEach(input => { input.style.display = ''; });
-                             }
-                         } else {
-                             // For other sections, show "No content" message if empty
-                             if (!hasActualContent(sectionId)) { // Check if section has NO actual content
-                                let sectionName = '';
-                                if (sectionId === 'functionalRisksContent') sectionName = 'Functional Risks';
-                                else if (sectionId === 'securityConcernsContent') sectionName = 'Security Concerns';
-                                else if (sectionId === 'performanceImprovementsContent') sectionName = 'Performance Improvements';
+                        if (!sectionHadAnyActualContent) { // If the entire section is truly empty
+                            let sectionName = '';
+                            if (sectionId === 'functionalRisksContent') sectionName = 'Functional Risks';
+                            else if (sectionId === 'securityConcernsContent') sectionName = 'Security Concerns';
+                            else if (sectionId === 'performanceImprovementsContent') sectionName = 'Performance Improvements';
+                            else if (sectionId === 'conclusionContent') sectionName = 'Conclusion';
 
-                                const releaseVersion = releaseVersionInput ? releaseVersionInput.value.trim() : '[Release Version]';
-                                const message = `No ${sectionName} identified for Release ${releaseVersion}.`;
+                            const releaseVersion = releaseVersionInput ? releaseVersionInput.value.trim() : '[Release Version]';
+                            const message = `No ${sectionName} identified for Release ${releaseVersion}.`;
 
-                                // Set message text and make it visible
-                                if (messageElement) {
-                                    messageElement.textContent = message;
-                                    messageElement.style.display = 'block';
-                                    console.log(`Added "No content" message to ${sectionId}`); // Log message addition
-                                }
-
-                                 // Hide existing inputs/textareas in this empty section during print
-                                 inputs.forEach(input => {
-                                    input.style.display = 'none';
-                                 });
-                            } else {
-                                // If section *does* have content, ensure message is hidden and inputs are visible
-                                if (messageElement) {
-                                    messageElement.style.display = 'none';
-                                }
-                                 inputs.forEach(input => {
-                                    input.style.display = ''; // Revert to default display
-                                 });
+                            if (messageElement) {
+                                messageElement.textContent = message;
+                                messageElement.style.display = 'block';
+                                console.log(`Added "No content" message to ${sectionId}`); // Log message addition
                             }
-                         }
+                            // Hide all inputs within this entirely empty section, as the main message covers it
+                            inputs.forEach(input => {
+                                input.style.display = 'none';
+                            });
+                        } else {
+                            // If the section *does* have some content, hide the main "No content" message
+                            if (messageElement) {
+                                messageElement.style.display = 'none';
+                            }
+                            // Inputs are already handled in the loop above
+                        }
                     }
                 });
             });
@@ -579,14 +597,24 @@
                  document.querySelectorAll('.section-content').forEach(content => {
                     // Remove added messages and restore display
                     const messageElement = content.querySelector('.no-content-message');
-                    const inputs = content.querySelectorAll('input, textarea');
+                    const inputs = content.querySelectorAll('input[type="text"], textarea'); // Only text/textarea for N/A logic
 
                     if (messageElement) {
                         messageElement.style.display = 'none'; // Hide the message again
                         console.log(`Removed "No content" message from ${content.id}`); // Log message removal
                     }
                      inputs.forEach(input => {
-                        input.style.display = ''; // Restore display of inputs/textareas
+                        // Restore original state if stored
+                        if (input._originalValue !== undefined) {
+                            input.value = input._originalValue;
+                            input.readOnly = input._originalReadOnly;
+                            input.style.display = input._originalDisplay;
+                            input.classList.remove('print-na-input'); // Remove N/A styling class
+                            input.style.border = input._originalBorder; // Restore original border
+                            input.style.backgroundColor = input._originalBgColor; // Restore original background
+                            input.style.boxShadow = input._originalBoxShadow; // Restore original shadow
+                            input.style.color = input._originalColor; // Restore original color
+                        }
                      });
 
                     // Restore max-height for collapsing functionality
