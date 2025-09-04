@@ -294,7 +294,7 @@
 <body>
     <div class="container">
          <div class="logo-container">
-            <svg xmlns="http://www.w3.org/2000/svg" width="41" height="32" viewBox="0 0 41 32" fill="none">
+            <svg xmlns="http://www.w3.org/2000/svg" width="41" height="32" viewBox="0 0 41 32" fill="none" onclick="window.open('https://aj-hp.github.io/CAB/TestSummaryReport.html')">
                 <path d="M8.06592 19.9669H16.132V27.9669C16.132 30.1943 14.3264 32 12.099 32C9.87158 32 8.06592 30.1943 8.06592 27.9669V19.9669Z" fill="#3D2683"/>
                 <path d="M8.06592 4.03306C8.06592 1.80566 9.87158 0 12.099 0C14.3264 0 16.132 1.80566 16.132 4.03306V11.9008H8.06592V4.03306Z" fill="#3D2683"/>
                 <path d="M24.1983 19.9669H32.2644V27.9669C32.2644 30.1943 30.4587 32 28.2313 32C26.0039 32 24.1983 30.1943 24.1983 27.9669V19.9669Z" fill="#EB595E"/>
@@ -302,7 +302,7 @@
                 <path d="M32.2644 19.9669V11.9008L36.2977 11.9008C38.5251 11.9008 40.3308 13.7065 40.3308 15.9339C40.3308 18.1613 38.5251 19.9669 36.2977 19.9669H32.2644Z" fill="#EB595E"/>
                 <path d="M4.03306 19.9669C1.80566 19.9669 -2.65615e-08 18.1613 0 15.9339C2.65615e-08 13.7065 1.80566 11.9008 4.03306 11.9008L8.06592 11.9008V19.9669H4.03306Z" fill="#3D2683"/>
                 <path d="M16.132 11.9008H24.1983V19.9669H16.132V11.9008Z" fill="#EB595E"/>
-                </svg>
+            </svg>
             </div>
 
         <h1>Test Summary Report</h1>
@@ -351,9 +351,12 @@
         <h2 class="section-header" data-target="conclusionContent">4. Conclusion <span class="toggle-icon">&#9660;</span></h2>
         <div id="conclusionContent" class="section-content">
             <textarea id="conclusionText">Based on the comprehensive testing summarised in this report, Release [Insert Release Version Number/Name] is deemed ready for deployment. All critical functional risks and security concerns have been addressed or accepted with appropriate mitigation strategies in place. Performance testing indicates the release meets or exceeds established benchmarks. This report provides the necessary information for the Senior Leadership Team to provide final consent for the release.</textarea>
-             <p class="no-content-message"></p> </div> <div class="button-container">
+             <p class="no-content-message"></p> 
+        </div> 
+        <div class="button-container">
             <button class="report-button" onclick="window.print()"><i class="fas fa-file-pdf"></i> Save as PDF</button>
             <button class="report-button" onclick="window.open('https://github.com/AJ-HP/CAB/issues', '_blank')"><i class="fas fa-bug"></i> Feedback</button>
+            <button class="report-button" onclick="window.open('https://aj-hp.github.io/CAB/TestCaseWriter.html')"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Test Cases</button>
         </div>
 
     </div>
