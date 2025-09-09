@@ -4,60 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Case Writer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 1rem;
-        }
-        .container {
-            max-width: 900px;
-            width: 100%;
-        }
-        .loading-spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border-left-color: #3b82f6;
-            animation: spin 1s ease infinite;
-            display: none; /* Hidden by default */
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .message-box {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #fefcbf;
-            color: #8a6534;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .message-box.show {
-            display: block;
-            opacity: 1;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container bg-white p-8 md:p-12 rounded-xl shadow-lg border border-gray-200">
+    <div class="container">
         <div class="logo-container">
             <svg xmlns="http://www.w3.org/2000/svg" width="41" height="32" viewBox="0 0 41 32" fill="none" onclick="window.open('https://aj-hp.github.io/CAB/TestSummaryReport.html')">
                 <path d="M8.06592 19.9669H16.132V27.9669C16.132 30.1943 14.3264 32 12.099 32C9.87158 32 8.06592 30.1943 8.06592 27.9669V19.9669Z" fill="#3D2683"/>
@@ -68,129 +21,39 @@
                 <path d="M4.03306 19.9669C1.80566 19.9669 -2.65615e-08 18.1613 0 15.9339C2.65615e-08 13.7065 1.80566 11.9008 4.03306 11.9008L8.06592 11.9008V19.9669H4.03306Z" fill="#3D2683"/>
                 <path d="M16.132 11.9008H24.1983V19.9669H16.132V11.9008Z" fill="#EB595E"/>
             </svg>
-            </div>
-        <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-2">Software Tester AI</h1>
-        <p class="text-center text-gray-500 mb-8">
+        </div>
+        <h1 class="main-title">Test Case Writer</h1>
+        <p>
             An experienced software tester, writing test cases for a user story and its acceptance criteria.
         </p>
 
-        <!-- Input Section -->
-        <div class="space-y-6 mb-8">
+        <div>
             <div>
-                <label for="userStory" class="block text-gray-700 font-semibold mb-2">Description</label>
-                <textarea id="userStory" rows="4" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200" placeholder="As a user, I want to log in, so that I can access my account."></textarea>
+                <h4 for="userStory">Description</h4>
+                <textarea id="userStory" rows="4" placeholder="As a user, I want to log in, so that I can access my account."></textarea>
             </div>
             <div>
-                <label for="acceptanceCriteria" class="block text-gray-700 font-semibold mb-2">Acceptance Criteria</label>
-                <textarea id="acceptanceCriteria" rows="6" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200" placeholder="1. Given I am on the login page and enter a valid username and password, When I click the login button, Then I should be redirected to the dashboard.
+                <h4 for="acceptanceCriteria">Acceptance Criteria</h4>
+                <textarea id="acceptanceCriteria" rows="6" placeholder="1. Given I am on the login page and enter a valid username and password, When I click the login button, Then I should be redirected to the dashboard.
 2. Given I am on the login page and enter an invalid username or password, When I click the login button, Then I should see an error message."></textarea>
             </div>
         </div>
         
-        <!-- Action Button and Loading Indicator -->
-        <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 mb-8">
-            <button id="generateBtn" class="w-full md:w-auto px-6 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+        <div class="button-container">
+            <button id="generateBtn" class="report-button">
                 Generate Test Cases
             </button>
             <div id="loading" class="loading-spinner"></div>
         </div>
         
-        <!-- Output Section -->
         <div id="resultsContainer" class="hidden">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Generated Test Cases</h2>
-            <pre id="results" class="bg-gray-100 p-4 md:p-6 rounded-lg border border-gray-300 overflow-auto whitespace-pre-wrap text-gray-800"></pre>
+            <h4>Generated Test Cases</h4>
+            <pre id="results"></pre>
         </div>
     </div>
 
-    <!-- Custom Message Box -->
     <div id="messageBox" class="message-box"></div>
 
-    <script>
-        const userStoryEl = document.getElementById('userStory');
-        const acceptanceCriteriaEl = document.getElementById('acceptanceCriteria');
-        const generateBtn = document.getElementById('generateBtn');
-        const loadingEl = document.getElementById('loading');
-        const resultsEl = document.getElementById('results');
-        const resultsContainerEl = document.getElementById('resultsContainer');
-        const messageBox = document.getElementById('messageBox');
-    
-        // Display a custom message box instead of an alert
-        function showMessage(text, duration = 3000) {
-            messageBox.textContent = text;
-            messageBox.classList.add('show');
-            setTimeout(() => {
-                messageBox.classList.remove('show');
-            }, duration);
-        }
-    
-        // This is the new function that will make the secure API call
-        async function callGeminiApi(prompt) {
-            // You MUST update this URL with your actual Netlify site name
-            const netlifyFunctionUrl = 'https://velvety-mermaid-9eae77.netlify.app/.netlify/functions/generate';
-    
-            try {
-                const response = await fetch(netlifyFunctionUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ prompt: prompt })
-                });
-                
-                if (!response.ok) {
-                    // If the server returns an error, we'll parse it here
-                    const errorData = await response.json();
-                    throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorData.error}`);
-                }
-                
-                const data = await response.json();
-                return data.text; // The Netlify Function returns the text in a 'text' property
-                
-            } catch (error) {
-                console.error("Error calling serverless function:", error);
-                throw new Error("Failed to generate test cases. Check the console for details.");
-            }
-        }
-    
-        async function generateTestCases() {
-            const userStory = userStoryEl.value.trim();
-            const acceptanceCriteria = acceptanceCriteriaEl.value.trim();
-    
-            if (!userStory || !acceptanceCriteria) {
-                showMessage('Please enter both a user story and acceptance criteria.', 5000);
-                return;
-            }
-    
-            loadingEl.style.display = 'block';
-            generateBtn.disabled = true;
-            resultsContainerEl.classList.add('hidden');
-    
-            const systemPrompt = "You are an experienced software tester. You will receive a user story and its acceptance criteria. Your task is to generate a comprehensive set of test cases in Gherkin syntax (Given, When, Then). Ensure you cover both positive scenarios (happy paths) and negative or edge-case scenarios.";
-            
-            const userQuery = `User Story:\n${userStory}\n\nAcceptance Criteria:\n${acceptanceCriteria}\n\nNote: The response should only contain the test cases in Gherkin syntax, without any additional preamble or explanation.`;
-    
-            // Combine the system prompt and user query to send to your Netlify function
-            const fullPrompt = `${systemPrompt}\n\n${userQuery}`;
-    
-            try {
-                const generatedText = await callGeminiApi(fullPrompt);
-    
-                resultsEl.textContent = generatedText || "No response generated. Please try again.";
-                resultsContainerEl.classList.remove('hidden');
-    
-            } catch (error) {
-                console.error("Error generating content:", error);
-                showMessage(error.message, 5000);
-                resultsEl.textContent = "An error occurred. Please try again later.";
-                resultsContainerEl.classList.remove('hidden');
-    
-            } finally {
-                loadingEl.style.display = 'none';
-                generateBtn.disabled = false;
-            }
-        }
-    
-        generateBtn.addEventListener('click', generateTestCases);
-    </script>
+    <script src="scriptTCW.js"></script>
 </body>
 </html>
