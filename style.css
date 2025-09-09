@@ -15,7 +15,7 @@
     min-height: 100vh;
 }
 .container {
-    max-width: 900px;
+    max-width: 75%;
     width: 100%;
     margin: 20px auto;
     background-color: #ffffff; /* White background for the report container */
@@ -151,6 +151,16 @@ h2 .toggle-icon {
 
 .report-button:hover {
     background-color: #d14a4f; /* Slightly darker accent colour on hover */
+}
+
+#results {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: rgb(243 244 246);
+    border-color: rgb(209 213 219);
+    border-width: 1px;
+    border-radius: 0.5rem;
+    padding: 1rem;
 }
 
 /* Style for the "No content" message in PDF */
