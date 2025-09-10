@@ -61,7 +61,7 @@ h4 {
 
 h4.section-header {
     cursor: pointer;
-    /* Indicate that headings are clickable */
+    margin: auto;
 }
 
 h2:hover {
@@ -478,4 +478,6 @@ h2 .toggle-icon {
         margin-bottom: 0;
         /* Keep no bottom margin */
     }
-}
+    
+
+};
