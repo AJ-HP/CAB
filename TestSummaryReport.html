@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,21 +8,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="container">
         <div class="logo-container">
-            <svg xmlns="http://www.w3.org/2000/svg" width="41" height="32" viewBox="0 0 41 32" fill="none" onclick="window.open('https://aj-hp.github.io/CAB/TestSummaryReport.html')">
-                <path d="M8.06592 19.9669H16.132V27.9669C16.132 30.1943 14.3264 32 12.099 32C9.87158 32 8.06592 30.1943 8.06592 27.9669V19.9669Z" fill="#3D2683"/>
-                <path d="M8.06592 4.03306C8.06592 1.80566 9.87158 0 12.099 0C14.3264 0 16.132 1.80566 16.132 4.03306V11.9008H8.06592V4.03306Z" fill="#3D2683"/>
-                <path d="M24.1983 19.9669H32.2644V27.9669C32.2644 30.1943 30.4587 32 28.2313 32C26.0039 32 24.1983 30.1943 24.1983 27.9669V19.9669Z" fill="#EB595E"/>
-                <path d="M24.1983 4.03306C24.1983 1.80566 26.0039 0 28.2313 0C30.4587 0 32.2644 1.80566 32.2644 4.03306V11.9008H24.1983V4.03306Z" fill="#EB595E"/>
-                <path d="M32.2644 19.9669V11.9008L36.2977 11.9008C38.5251 11.9008 40.3308 13.7065 40.3308 15.9339C40.3308 18.1613 38.5251 19.9669 36.2977 19.9669H32.2644Z" fill="#EB595E"/>
-                <path d="M4.03306 19.9669C1.80566 19.9669 -2.65615e-08 18.1613 0 15.9339C2.65615e-08 13.7065 1.80566 11.9008 4.03306 11.9008L8.06592 11.9008V19.9669H4.03306Z" fill="#3D2683"/>
-                <path d="M16.132 11.9008H24.1983V19.9669H16.132V11.9008Z" fill="#EB595E"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="41" height="32" viewBox="0 0 41 32" fill="none"
+                onclick="window.open('https://aj-hp.github.io/CAB/TestSummaryReport.html')">
+                <path
+                    d="M8.06592 19.9669H16.132V27.9669C16.132 30.1943 14.3264 32 12.099 32C9.87158 32 8.06592 30.1943 8.06592 27.9669V19.9669Z"
+                    fill="#3D2683" />
+                <path
+                    d="M8.06592 4.03306C8.06592 1.80566 9.87158 0 12.099 0C14.3264 0 16.132 1.80566 16.132 4.03306V11.9008H8.06592V4.03306Z"
+                    fill="#3D2683" />
+                <path
+                    d="M24.1983 19.9669H32.2644V27.9669C32.2644 30.1943 30.4587 32 28.2313 32C26.0039 32 24.1983 30.1943 24.1983 27.9669V19.9669Z"
+                    fill="#EB595E" />
+                <path
+                    d="M24.1983 4.03306C24.1983 1.80566 26.0039 0 28.2313 0C30.4587 0 32.2644 1.80566 32.2644 4.03306V11.9008H24.1983V4.03306Z"
+                    fill="#EB595E" />
+                <path
+                    d="M32.2644 19.9669V11.9008L36.2977 11.9008C38.5251 11.9008 40.3308 13.7065 40.3308 15.9339C40.3308 18.1613 38.5251 19.9669 36.2977 19.9669H32.2644Z"
+                    fill="#EB595E" />
+                <path
+                    d="M4.03306 19.9669C1.80566 19.9669 -2.65615e-08 18.1613 0 15.9339C2.65615e-08 13.7065 1.80566 11.9008 4.03306 11.9008L8.06592 11.9008V19.9669H4.03306Z"
+                    fill="#3D2683" />
+                <path d="M16.132 11.9008H24.1983V19.9669H16.132V11.9008Z" fill="#EB595E" />
             </svg>
         </div>
 
-        <h1 class="main-title">Test Summary Report</h1>        
+        <h1 class="main-title">Test Summary Report</h1>
 
         <div class="top-fields">
             <div class="top-field-group">
@@ -38,45 +53,62 @@
                 <label for="preparedBy">Prepared By:</label>
                 <input type="text" id="preparedBy" placeholder="[Your Name/Team Name]">
             </div>
-            </div>
+        </div>
 
-        <h4 class="section-header" data-target="functionalRisksContent">1. Functional Risks <span class="toggle-icon">&#9660;</span></h4>
+        <h4 class="section-header" data-target="functionalRisksContent">1. Functional Risks <span
+                class="toggle-icon">&#9660;</span></h4>
         <div id="functionalRisksContent" class="section-content">
             <label>Identified Risks:</label>
-            <textarea class="risk-input" placeholder="List high-level functional risks, e.g., 'Dependency on external service causing occasional delays.'"></textarea>
+            <textarea class="risk-input"
+                placeholder="List high-level functional risks, e.g., 'Dependency on external service causing occasional delays.'"></textarea>
             <label>Overall Functional Stability:</label>
-            <textarea class="risk-input" placeholder="Summarise overall stability, e.g., 'Core functionality is stable; minor issues exist in edge cases.'"></textarea>
-             <p class="no-content-message"></p> </div>
+            <textarea class="risk-input"
+                placeholder="Summarise overall stability, e.g., 'Core functionality is stable; minor issues exist in edge cases.'"></textarea>
+            <p class="no-content-message"></p>
+        </div>
 
-        <h4 class="section-header" data-target="securityConcernsContent">2. Security Concerns <span class="toggle-icon">&#9660;</span></h4>
+        <h4 class="section-header" data-target="securityConcernsContent">2. Security Concerns <span
+                class="toggle-icon">&#9660;</span></h4>
         <div id="securityConcernsContent" class="section-content">
-             <label>Identified Concerns:</label>
-            <textarea class="security-input" placeholder="List high-level security concerns, e.g., 'Low-severity vulnerability identified and mitigated.'"></textarea>
+            <label>Identified Concerns:</label>
+            <textarea class="security-input"
+                placeholder="List high-level security concerns, e.g., 'Low-severity vulnerability identified and mitigated.'"></textarea>
             <label>Security Posture:</label>
-            <textarea class="security-input" placeholder="Summarise security status, e.g., 'No critical vulnerabilities found; adheres to security standards.'"></textarea>
-             <p class="no-content-message"></p> </div>
+            <textarea class="security-input"
+                placeholder="Summarise security status, e.g., 'No critical vulnerabilities found; adheres to security standards.'"></textarea>
+            <p class="no-content-message"></p>
+        </div>
 
-        <h4 class="section-header" data-target="performanceImprovementsContent">3. Performance Improvements <span class="toggle-icon">&#9660;</span></h4>
+        <h4 class="section-header" data-target="performanceImprovementsContent">3. Performance Improvements <span
+                class="toggle-icon">&#9660;</span></h4>
         <div id="performanceImprovementsContent" class="section-content">
             <label>Key Improvements:</label>
-            <textarea class="performance-input" placeholder="List key performance improvements, e.g., 'Improved dashboard loading time by 15%.'"></textarea>
-        <label>Overall Performance Summary:</label>
-            <textarea class="performance-input" placeholder="Summarise performance, e.g., 'Overall performance meets benchmarks and is stable under load.'"></textarea>
-             <p class="no-content-message"></p> </div>
+            <textarea class="performance-input"
+                placeholder="List key performance improvements, e.g., 'Improved dashboard loading time by 15%.'"></textarea>
+            <label>Overall Performance Summary:</label>
+            <textarea class="performance-input"
+                placeholder="Summarise performance, e.g., 'Overall performance meets benchmarks and is stable under load.'"></textarea>
+            <p class="no-content-message"></p>
+        </div>
 
-        <h4 class="section-header" data-target="conclusionContent">4. Conclusion <span class="toggle-icon">&#9660;</span></h4>
+        <h4 class="section-header" data-target="conclusionContent">4. Conclusion <span
+                class="toggle-icon">&#9660;</span></h4>
         <div id="conclusionContent" class="section-content">
-            <textarea id="conclusionText">Based on the comprehensive testing summarised in this report, Release [Insert Release Version Number/Name] is deemed ready for deployment. All critical functional risks and security concerns have been addressed or accepted with appropriate mitigation strategies in place. Performance testing indicates the release meets or exceeds established benchmarks. This report provides the necessary information for the Senior Leadership Team to provide final consent for the release.</textarea>
-             <p class="no-content-message"></p> 
-        </div> 
+            <textarea
+                id="conclusionText">Based on the comprehensive testing summarised in this report, Release [Insert Release Version Number/Name] is deemed ready for deployment. All critical functional risks and security concerns have been addressed or accepted with appropriate mitigation strategies in place. Performance testing indicates the release meets or exceeds established benchmarks. This report provides the necessary information for the Senior Leadership Team to provide final consent for the release.</textarea>
+            <p class="no-content-message"></p>
+        </div>
         <div class="button-container">
             <button class="report-button" onclick="window.print()"><i class="fas fa-file-pdf"></i> Save as PDF</button>
-            <button class="report-button" onclick="window.open('https://github.com/AJ-HP/CAB/issues', '_blank')"><i class="fas fa-bug"></i> Feedback</button>
-            <button class="report-button" onclick="window.open('https://aj-hp.github.io/CAB/TestCaseWriter.html')"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Test Cases</button>
+            <button class="report-button" onclick="window.open('https://github.com/AJ-HP/CAB/issues', '_blank')"><i
+                    class="fas fa-bug"></i> Feedback</button>
+            <button class="report-button" onclick="window.open('https://aj-hp.github.io/CAB/TestCaseWriter.html')"><i
+                    class="fa-solid fa-wand-magic-sparkles"></i> Generate Test Cases</button>
         </div>
 
     </div>
 
     <script src="scriptTSR.js"></script>
 </body>
+
 </html>
