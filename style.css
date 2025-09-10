@@ -13,7 +13,7 @@ body {
     padding: 20px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: top;
     min-height: 100vh;
 }
 
@@ -37,13 +37,12 @@ h4 {
     margin-bottom: 15px;
 }
 
-h1 {
+h1.main-title {
     border-bottom: 2px solid #3d2682;
     /* Primary colour for the border */
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    text-align: center;
-    /* Keeping centre for text-align is standard */
+    position: absolute;
+    top: 0px;
+    left: 29.5vw;
 }
 
 h4 {
@@ -245,10 +244,10 @@ h2 .toggle-icon {
 .top-fields {
     display: flex;
     gap: 20px;
-    /* Space between fields */
-    margin-bottom: 20px;
+    margin-top: 7vh;
     flex-wrap: wrap;
     /* Allow wrapping on smaller screens */
+    height: 10vh;
 }
 
 .top-field-group {
@@ -315,51 +314,15 @@ h2 .toggle-icon {
 /* Styling for print */
 @media print {
     body {
-        background-color: #fff;
-        /* White background for printing */
-        padding: 20px;
-        /* Keep padding on body */
+        align-items: top;
     }
-
     .container {
         box-shadow: none;
         /* No shadow in print */
-        margin: 0;
-        padding: 30px;
-        /* Keep padding on container for content spacing */
-        max-width: none;
+        max-width: 90%;
         /* Use full width */
         position: static;
         /* Change container position to static in print */
-        background-color: #fff;
-        /* White background in print */
-    }
-
-    .main-title {
-        background: linear-gradient(135deg, #3d2682, #eb595e);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 2.5rem;
-        font-weight: 700;
-        text-align: center;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #3d2682;
-        margin-bottom: 20px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-        background-color: #3d2682 !important;
-        /* Ensure primary colour background in print */
-        color: #ffffff !important;
-        /* Ensure white text in print */
-        cursor: default;
-        /* No pointer cursor in print */
-        border-bottom: 1px solid #ccc;
-        /* Add a subtle border */
-        margin-top: 20px;
-        box-shadow: none;
-        /* Remove neumorphic shadow in print */
     }
 
     .section-content {
@@ -455,7 +418,7 @@ h2 .toggle-icon {
         /* Keep flex display */
         gap: 20px;
         /* Keep gap */
-        margin-bottom: 20px;
+        margin-top: 3vh;
         /* Keep margin */
         flex-wrap: wrap;
         /* Keep wrapping */
