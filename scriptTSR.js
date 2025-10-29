@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
             let currentConclusionText = conclusionTextarea.value;
             console.log("Current conclusion text:", currentConclusionText);
 
+            // Regex to match the placeholder or any existing version number
             const versionRegex = /Release\s+\[Insert Release Version Number\/Name\]|Release\s+([\w.-]*)/i;
             conclusionTextarea.value = currentConclusionText.replace(versionRegex, `Release ${version}`);
             console.log("Conclusion text after replacing version:", conclusionTextarea.value);
@@ -129,7 +130,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!inputElement) return true; // Treat non-existent input as empty
         const value = inputElement.value.trim();
         const placeholder = inputElement.placeholder ? inputElement.placeholder.trim() : '';
-        return value === '' || value === placeholder;
+        // Also check if the content is just "N/A" (which can happen after a print -> restore -> print cycle)
+        return value === '' || value === placeholder || value.toLowerCase() === 'n/a';
     }
 
     // Function to check if a section's inputs have actual content (not just placeholder)
@@ -140,6 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const inputs = section.querySelectorAll('input[type="text"], input[type="date"], textarea');
         let hasContent = false;
         inputs.forEach(input => {
+            // Check if input has any content that is not its placeholder or "N/A"
             if (!isInputActuallyEmpty(input)) {
                 hasContent = true;
             }
@@ -147,13 +150,21 @@ document.addEventListener('DOMContentLoaded', function () {
         return hasContent;
     }
 
+    // List of sections that should collapse if empty on initial load
+    const optionalSections = [
+        'functionalRisksContent', 
+        'securityConcernsContent', 
+        'performanceImprovementsContent',
+        'aiImpactContent', 
+        'notTestedContent'
+    ];
+
     // Initial check and collapse empty sections on load
     sectionHeaders.forEach(header => {
         const targetId = header.dataset.target;
         const targetContent = document.getElementById(targetId);
 
-        // Only collapse Functional Risks, Security, and Performance if empty
-        if (['functionalRisksContent', 'securityConcernsContent', 'performanceImprovementsContent'].includes(targetId) && targetContent) {
+        if (optionalSections.includes(targetId) && targetContent) {
             if (!hasActualContent(targetId)) { // Check if section *doesn't* have actual content
                 targetContent.classList.add('collapsed');
                 const toggleIcon = header.querySelector('.toggle-icon');
@@ -171,95 +182,109 @@ document.addEventListener('DOMContentLoaded', function () {
             if (parentSectionContent) {
                 let header = document.querySelector(`.section-header[data-target="${parentSectionContent.id}"]`);
                 if (header) {
-                    // Only toggle collapse for the relevant sections
-                    if (['functionalRisksContent', 'securityConcernsContent', 'performanceImprovementsContent'].includes(parentSectionContent.id)) {
-                        if (!hasActualContent(parentSectionContent.id)) {
-                            // If section becomes empty, collapse it (optional, might be annoying)
-                            // parentSectionContent.classList.add('collapsed');
-                            // header.querySelector('.toggle-icon').innerHTML = '&#9658;';
-                        } else {
+                    // Only apply auto-expand logic to optional sections when content is added
+                    if (optionalSections.includes(parentSectionContent.id)) {
+                        if (hasActualContent(parentSectionContent.id)) {
                             // If content is added, ensure it's not collapsed
                             parentSectionContent.classList.remove('collapsed');
                             const toggleIcon = header.querySelector('.toggle-icon');
                             if (toggleIcon) toggleIcon.innerHTML = '&#9660;';
-                        }
+                        } 
+                        // Note: We don't re-collapse if content is deleted, as that can be annoying during editing.
                     }
                 }
             }
         });
     });
 
+    // List of sections that should have a "No Content" message on print if empty
+    const sectionsForPrintNA = [
+        'functionalRisksContent', 
+        'securityConcernsContent', 
+        'performanceImprovementsContent', 
+        'aiImpactContent', 
+        'notTestedContent', 
+        'conclusionContent'
+    ];
+
+
     // Logic before printing
     window.addEventListener('beforeprint', () => {
-        console.log("Before print event triggered."); // Log before print
+        console.log("Before print event triggered. Transforming to presentation mode."); 
 
-        // --- START: Ensure textareas are fully expanded for print ---
-        allTextareas.forEach(textarea => {
-            // Ensure the textarea shows all its content
-            textarea.style.height = 'auto'; // Reset height
-            textarea.style.height = textarea.scrollHeight + 'px'; // Set to scroll height
-            textarea.style.overflowY = 'hidden'; // Hide scrollbar for printing if any
+        // 1. --- Collect ALL inputs/textareas for transformation ---
+        const allTransformableInputs = [
+            // Top fields
+            ...document.querySelectorAll('.top-fields input[type="text"], .top-fields input[type="date"]'),
+            // Section fields
+            ...document.querySelectorAll('.section-content input[type="text"], .section-content textarea')
+        ];
+        
+        let sectionHadAnyActualContentMap = {};
+
+        // 2. --- Transform all inputs/textareas to presentation mode ---
+        allTransformableInputs.forEach(input => {
+            const isInputEmpty = isInputActuallyEmpty(input);
+            const parentSection = input.closest('.section-content');
+            
+            // Store original values/styles for afterprint restoration
+            input._originalValue = input.value; 
+            input._originalReadOnly = input.readOnly;
+            input._originalDisplay = input.style.display;
+            input._originalHeight = input.style.height; 
+            input._originalMinHeight = input.style.minHeight; 
+            input._originalOverflowY = input.style.overflowY; 
+            
+
+            // Apply presentation mode settings to ALL fields
+            input.readOnly = true;
+
+            if (isInputEmpty) {
+                // For empty inputs, set N/A value and apply N/A styling class
+                input.value = "N/A";
+                input.classList.add('print-na-input'); 
+            } else {
+                // For filled inputs, ensure no N/A styling class is present
+                input.classList.remove('print-na-input');
+                
+                // Track content presence for section-level messages
+                if (parentSection) {
+                   sectionHadAnyActualContentMap[parentSection.id] = true;
+                }
+            }
+
+            // Ensure textareas are fully expanded
+            if (input.tagName.toLowerCase() === 'textarea') {
+                input.style.height = 'auto'; 
+                input.style.height = input.scrollHeight + 'px';
+                input.style.overflowY = 'hidden'; 
+            }
         });
-        // --- END: Ensure textareas are fully expanded for print ---
 
 
+        // 3. --- Handle Section Expansion and "No Content" Messages ---
         document.querySelectorAll('.section-content').forEach(content => {
             // Ensure all sections are expanded for printing
             content.classList.remove('collapsed');
-            content.style.maxHeight = 'none'; // Ensure max-height is removed for print
+            content.style.maxHeight = 'none'; 
 
             const sectionId = content.id;
             const messageElement = content.querySelector('.no-content-message');
-            const inputs = content.querySelectorAll('input[type="text"], textarea'); // Only text/textarea for N/A logic
 
-            let sectionHadAnyActualContent = false; // Flag to track if the *entire section* had any actual content
-
-            inputs.forEach(input => {
-                if (isInputActuallyEmpty(input)) {
-                    // If individual input is empty, set N/A and style for print
-                    input._originalValue = input.value; // Store original value
-                    input._originalDisplay = input.style.display; // Store original display
-                    input._originalReadOnly = input.readOnly; // Store original readOnly state
-                    input._originalBorder = input.style.border;
-                    input._originalBgColor = input.style.backgroundColor;
-                    input._originalBoxShadow = input.style.boxShadow;
-                    input._originalColor = input.style.color;
-                    input._originalHeight = input.style.height; // Store height
-                    input._originalMinHeight = input.style.minHeight; // Store minHeight
-                    input._originalOverflowY = input.style.overflowY; // Store overflowY
-
-
-                    input.value = "N/A";
-                    input.readOnly = true;
-                    input.classList.add('print-na-input'); // Add class for N/A styling
-                    input.style.display = ''; // Ensure it's visible if it was hidden
-                    if (input.tagName.toLowerCase() === 'textarea') {
-                        input.style.height = 'auto'; // Let N/A take minimal space
-                        input.style.minHeight = 'auto';
-                        input.style.overflowY = 'hidden';
-                    }
-                } else {
-                    sectionHadAnyActualContent = true; // Mark section as having content
-                    // Ensure it's not read-only or styled as N/A from a previous print
-                    input.readOnly = false;
-                    input.classList.remove('print-na-input');
-                    input.style.display = ''; // Ensure it's visible
-                    if (input.tagName.toLowerCase() === 'textarea') {
-                        // Ensure height is set to show all content for print
-                        input.style.height = 'auto';
-                        input.style.height = input.scrollHeight + 'px';
-                        input.style.overflowY = 'hidden';
-                    }
-                }
-            });
+            // Find all inputs that belong to THIS section only
+            const sectionInputs = content.querySelectorAll('input[type="text"], textarea');
 
             // Handle the main section's "No content" message if the *entire section* is empty
-            if (['functionalRisksContent', 'securityConcernsContent', 'performanceImprovementsContent', 'conclusionContent'].includes(sectionId)) {
-                if (!sectionHadAnyActualContent) { // If the entire section is truly empty
+            if (sectionsForPrintNA.includes(sectionId)) {
+                if (!sectionHadAnyActualContentMap[sectionId]) { 
+                    
+                    // Logic for generating section name for the message
                     let sectionName = '';
                     if (sectionId === 'functionalRisksContent') sectionName = 'Functional Risks';
                     else if (sectionId === 'securityConcernsContent') sectionName = 'Security Concerns';
                     else if (sectionId === 'performanceImprovementsContent') sectionName = 'Performance Improvements';
+                    else if (sectionId === 'aiImpactContent') sectionName = 'AI Impact';
+                    else if (sectionId === 'notTestedContent') sectionName = 'Untested Items';
                     else if (sectionId === 'conclusionContent') sectionName = 'Conclusion';
 
                     const releaseVersion = releaseVersionInput ? releaseVersionInput.value.trim() : '[Release Version]';
@@ -268,10 +293,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (messageElement) {
                         messageElement.textContent = message;
                         messageElement.style.display = 'block';
-                        console.log(`Added "No content" message to ${sectionId}`); // Log message addition
                     }
                     // Hide all inputs within this entirely empty section, as the main message covers it
-                    inputs.forEach(input => {
+                    sectionInputs.forEach(input => {
                         input.style.display = 'none';
                     });
                 } else {
@@ -279,7 +303,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (messageElement) {
                         messageElement.style.display = 'none';
                     }
-                    // Inputs are already handled in the loop above
                 }
             }
         });
@@ -287,48 +310,46 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Logic after printing
     window.addEventListener('afterprint', () => {
-        console.log("After print event triggered."); // Log after print
+        console.log("After print event triggered. Restoring form mode.");
 
-        document.querySelectorAll('.section-content').forEach(content => {
-            // Remove added messages and restore display
-            const messageElement = content.querySelector('.no-content-message');
-            const inputs = content.querySelectorAll('input[type="text"], textarea'); // Only text/textarea for N/A logic
+        // 1. --- Collect ALL inputs/textareas that were transformed ---
+        const allTransformableInputs = [
+            ...document.querySelectorAll('.top-fields input[type="text"], .top-fields input[type="date"]'),
+            ...document.querySelectorAll('.section-content input[type="text"], .section-content textarea')
+        ];
 
-            if (messageElement) {
-                messageElement.style.display = 'none'; // Hide the message again
-                console.log(`Removed "No content" message from ${content.id}`); // Log message removal
-            }
-            inputs.forEach(input => {
-                // Restore original state if stored
-                if (input._originalValue !== undefined) {
-                    input.value = input._originalValue;
-                    input.readOnly = input._originalReadOnly;
-                    input.style.display = input._originalDisplay;
-                    input.classList.remove('print-na-input'); // Remove N/A styling class
-                    input.style.border = input._originalBorder; // Restore original border
-                    input.style.backgroundColor = input._originalBgColor; // Restore original background
-                    input.style.boxShadow = input._originalBoxShadow; // Restore original shadow
-                    input.style.color = input._originalColor; // Restore original color
-                    if (input.tagName.toLowerCase() === 'textarea') {
-                        input.style.height = input._originalHeight; // Restore original height
-                        input.style.minHeight = input._originalMinHeight; // Restore original minHeight
-                        input.style.overflowY = input._originalOverflowY; // Restore original overflowY
-                        // Trigger auto-resize again to adjust to original content
-                        if (typeof input.dispatchEvent === 'function') {
-                            input.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
-                        }
-                    }
-                }
-                // For textareas that were not empty, also re-trigger resize
-                else if (input.tagName.toLowerCase() === 'textarea') {
+        // 2. --- Restore all inputs/textareas ---
+        allTransformableInputs.forEach(input => {
+            // Restore original state if stored
+            if (input._originalValue !== undefined) {
+                input.value = input._originalValue;
+                input.readOnly = input._originalReadOnly;
+                input.style.display = input._originalDisplay;
+                input.classList.remove('print-na-input'); // Remove N/A styling class
+
+                if (input.tagName.toLowerCase() === 'textarea') {
+                    input.style.height = input._originalHeight; 
+                    input.style.minHeight = input._originalMinHeight; 
+                    input.style.overflowY = input._originalOverflowY; 
+                    // Trigger auto-resize again to adjust to original content
                     if (typeof input.dispatchEvent === 'function') {
                         input.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
                     }
                 }
-            });
+            }
+        });
 
+        // 3. --- Restore Section Content and Collapse State ---
+        document.querySelectorAll('.section-content').forEach(content => {
+            // Remove added messages and restore display
+            const messageElement = content.querySelector('.no-content-message');
+            
+            if (messageElement) {
+                messageElement.style.display = 'none'; 
+            }
+            
             // Restore max-height for collapsing functionality
-            content.style.maxHeight = '1000px'; // Or whatever your default expanded max-height is
+            content.style.maxHeight = '1000px';
 
         });
 
@@ -336,13 +357,13 @@ document.addEventListener('DOMContentLoaded', function () {
         sectionHeaders.forEach(header => {
             const targetId = header.dataset.target;
             const targetContent = document.getElementById(targetId);
-            // Re-collapse sections that were empty initially (only Functional Risks, Security, Performance)
-            if (['functionalRisksContent', 'securityConcernsContent', 'performanceImprovementsContent'].includes(targetId) && targetContent) {
+            
+            // Re-collapse sections that were empty initially (only optional sections)
+            if (optionalSections.includes(targetId) && targetContent) {
                 if (!hasActualContent(targetId)) { // Check if section still has NO actual content
                     targetContent.classList.add('collapsed');
                     const toggleIcon = header.querySelector('.toggle-icon');
                     if (toggleIcon) toggleIcon.innerHTML = '&#9658;'; // Right arrow
-                    console.log(`Re-collapsed ${targetId} after print.`); // Log re-collapse
                 }
             }
         });

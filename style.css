@@ -3,7 +3,7 @@
  * Styling from TestSummaryReport.html is prioritized.
  */
 
-body {
+ body {
     font-family: 'Inter', sans-serif;
     /* Using Inter font */
     line-height: 1.6;
@@ -252,11 +252,8 @@ h2 .toggle-icon {
 
 /* Styles for "N/A" content in print */
 .print-na-input {
-    border: none !important;
-    background-color: transparent !important;
-    box-shadow: none !important;
     color: #888 !important;
-    font-style: italic;
+    font-style: italic !important;
 }
 
 /* Flex container for top fields */
@@ -329,7 +326,7 @@ h2 .toggle-icon {
     opacity: 1;
 }
 
-/* Styling for print */
+/* Styling for print - ENHANCED FOR PRESENTATION MODE */
 @media print {
     body {
         align-items: top;
@@ -376,17 +373,24 @@ h2 .toggle-icon {
         /* Hide toggle icons in print */
     }
 
+    /* OVERRIDE: Force all inputs/textareas to look like plain text */
     input[type="text"],
     input[type="date"],
     textarea {
-        /* Removed print-specific border/padding/margin here, handled by .print-na-input or default */
-        box-shadow: none;
-        /* Remove neumorphic shadow in print */
+        border: none !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important; /* Remove input padding */
+        margin-bottom: 5px !important; /* Tighter spacing for presentation */
+        color: #333 !important; /* Ensure content is black/dark */
+        resize: none !important; /* Prevent resize handles from showing */
     }
 
     label {
         font-weight: bold;
         margin-bottom: 2px;
+        display: inline-block; /* Make labels flow better with the data */
+        margin-right: 5px;
     }
 
     .placeholder-text {

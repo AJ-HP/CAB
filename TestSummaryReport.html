@@ -58,46 +58,51 @@
         <h4 class="section-header" data-target="functionalRisksContent">1. Functional Risks <span
                 class="toggle-icon">&#9660;</span></h4>
         <div id="functionalRisksContent" class="section-content">
-            <label>Identified Risks:</label>
             <textarea class="risk-input"
-                placeholder="List high-level functional risks, e.g., 'Dependency on external service causing occasional delays.'"></textarea>
-            <label>Overall Functional Stability:</label>
-            <textarea class="risk-input"
-                placeholder="Summarise overall stability, e.g., 'Core functionality is stable; minor issues exist in edge cases.'"></textarea>
+                placeholder="List high-level functional risks, e.g., feature X has been moved behind a feature flag which could present some confusion."></textarea>
             <p class="no-content-message"></p>
         </div>
 
         <h4 class="section-header" data-target="securityConcernsContent">2. Security Concerns <span
                 class="toggle-icon">&#9660;</span></h4>
         <div id="securityConcernsContent" class="section-content">
-            <label>Identified Concerns:</label>
             <textarea class="security-input"
-                placeholder="List high-level security concerns, e.g., 'Low-severity vulnerability identified and mitigated.'"></textarea>
-            <label>Security Posture:</label>
-            <textarea class="security-input"
-                placeholder="Summarise security status, e.g., 'No critical vulnerabilities found; adheres to security standards.'"></textarea>
+                placeholder="List high-level security concerns, e.g., minimum viable product contains some details in an API call that could be hidden."></textarea>
             <p class="no-content-message"></p>
         </div>
 
         <h4 class="section-header" data-target="performanceImprovementsContent">3. Performance Improvements <span
                 class="toggle-icon">&#9660;</span></h4>
         <div id="performanceImprovementsContent" class="section-content">
-            <label>Key Improvements:</label>
             <textarea class="performance-input"
-                placeholder="List key performance improvements, e.g., 'Improved dashboard loading time by 15%.'"></textarea>
-            <label>Overall Performance Summary:</label>
-            <textarea class="performance-input"
-                placeholder="Summarise performance, e.g., 'Overall performance meets benchmarks and is stable under load.'"></textarea>
+                placeholder="List key performance improvements, e.g., refactored filter search logic for improved response speeds."></textarea>
             <p class="no-content-message"></p>
         </div>
 
-        <h4 class="section-header" data-target="conclusionContent">4. Conclusion <span
+        <h4 class="section-header" data-target="aiImpactContent">4. AI Impact <span
+            class="toggle-icon">&#9660;</span></h4>
+        <div id="aiImpactContent" class="section-content">
+            <textarea class="ai-input" id="aiImpactText"
+                placeholder="Note to Senior Leadership about how this release will impact our AI services, e.g., direct code changes to the AI model or changes to a page with AI elements."></textarea>
+            <p class="no-content-message"></p>
+        </div>
+
+        <h4 class="section-header" data-target="notTestedContent">5. Not Tested <span
+            class="toggle-icon">&#9660;</span></h4>
+        <div id="notTestedContent" class="section-content">
+            <textarea class="not-tested-input" id="notTestedText"
+                placeholder="Highlight work items that have explicitly NOT been tested by QA and the reasons why. eg.[Work Item ID] - [Reason]."></textarea>
+            <p class="no-content-message"></p>
+        </div>
+        
+        <h4 class="section-header" data-target="conclusionContent">6. Conclusion <span
                 class="toggle-icon">&#9660;</span></h4>
         <div id="conclusionContent" class="section-content">
             <textarea
                 id="conclusionText">Based on the comprehensive testing summarised in this report, Release [Insert Release Version Number/Name] is deemed ready for deployment. All critical functional risks and security concerns have been addressed or accepted with appropriate mitigation strategies in place. Performance testing indicates the release meets or exceeds established benchmarks. This report provides the necessary information for the Senior Leadership Team to provide final consent for the release.</textarea>
             <p class="no-content-message"></p>
         </div>
+        
         <div class="button-container">
             <button class="report-button" onclick="window.print()"><i class="fas fa-file-pdf"></i> Save as PDF</button>
             <button class="report-button" onclick="window.open('https://github.com/AJ-HP/CAB/issues', '_blank')"><i
