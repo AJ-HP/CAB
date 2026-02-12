@@ -94,8 +94,21 @@
                 placeholder="Highlight work items that have explicitly NOT been tested by QA and the reasons why. eg.[Work Item ID] - [Reason]."></textarea>
             <p class="no-content-message"></p>
         </div>
+
+        <h4 class="section-header" data-target="demoSmokeTestsContent">6. Demo Smoke Tests <span
+            class="toggle-icon">&#9660;</span></h4>
+        <div id="demoSmokeTestsContent" class="section-content">
+            <div class="smoke-test-selector">
+                <label for="platformSelect">Select Platform:</label>
+                <select id="platformSelect">
+                    <option value="">-- Select a platform --</option>
+                </select>
+            </div>
+            <div id="smokeTestsList" class="smoke-tests-list"></div>
+            <p class="no-content-message"></p>
+        </div>
         
-        <h4 class="section-header" data-target="conclusionContent">6. Conclusion <span
+        <h4 class="section-header" data-target="conclusionContent">7. Conclusion <span
                 class="toggle-icon">&#9660;</span></h4>
         <div id="conclusionContent" class="section-content">
             <textarea

@@ -1,6 +1,95 @@
 document.addEventListener('DOMContentLoaded', function () {
     console.log("DOM fully loaded and parsed"); // Log when DOM is ready
 
+    // --- START: Demo Smoke Tests Data ---
+    // Edit this object to update platform smoke tests
+    const smokeTestsData = {
+        "My Gateway (MGW)": [
+            "Login",
+            "Register new employee",
+            "Upload a document (Records of Care)",
+            "Policy document links",
+            "Cancel/change an appointment",
+            "Viewing a report (Documents Tab)"
+        ],
+        "Client Portal": [
+            "Log in",
+            "Generate and submit both a referral and a questionnaire (Prerequisite to GW2 Item 2)",
+            "View documents and reports",
+            "Re-refer a rejected referral"
+        ],
+        "Gateway 2 (GW2)": [
+            "Log in",
+            "Both triage and screening cases can be created (Client Portal Item 2 to be done first)",
+            "Cases Lists, sorting and filtering (larger client)",
+            "Publishing report (outcome)",
+            "Booking an appointment (1 or more types)",
+            "Closing a case (tidy up created test cases)"
+        ],
+        "Gateway Platform (GWP)": [
+            "TBC"
+        ],
+        "Workplace Support (WPS)": [
+            "TBC"
+        ],
+        "Customer Management Module (CMM)": [
+            "Log in",
+            "Do the Tabs load correctly",
+            "Add availability to a clinician"
+        ],
+        "Gateway For Professionals (G4P)": [
+            "TBC"
+        ]
+    };
+
+    // --- Initialize Demo Smoke Tests Dropdown ---
+    const platformSelect = document.getElementById('platformSelect');
+    const smokeTestsList = document.getElementById('smokeTestsList');
+
+    if (platformSelect && smokeTestsList) {
+        // Populate dropdown with platform names
+        Object.keys(smokeTestsData).forEach(platform => {
+            const option = document.createElement('option');
+            option.value = platform;
+            option.textContent = platform;
+            platformSelect.appendChild(option);
+        });
+
+        // Handle platform selection
+        platformSelect.addEventListener('change', function() {
+            const selectedPlatform = this.value;
+            smokeTestsList.innerHTML = '';
+
+            if (selectedPlatform && smokeTestsData[selectedPlatform]) {
+                const platformHeader = document.createElement('h5');
+                platformHeader.className = 'smoke-test-platform-header';
+                platformHeader.textContent = selectedPlatform;
+                smokeTestsList.appendChild(platformHeader);
+
+                const testList = document.createElement('ul');
+                testList.className = 'smoke-test-items';
+                smokeTestsData[selectedPlatform].forEach(test => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = test;
+                    testList.appendChild(listItem);
+                });
+                smokeTestsList.appendChild(testList);
+
+                // Auto-expand section when platform is selected
+                const demoSection = document.getElementById('demoSmokeTestsContent');
+                if (demoSection) {
+                    demoSection.classList.remove('collapsed');
+                    const header = document.querySelector('.section-header[data-target="demoSmokeTestsContent"]');
+                    if (header) {
+                        const toggleIcon = header.querySelector('.toggle-icon');
+                        if (toggleIcon) toggleIcon.innerHTML = '&#9660;';
+                    }
+                }
+            }
+        });
+    }
+    // --- END: Demo Smoke Tests Logic ---
+
     // --- START: Textarea Auto-Resize Logic ---
     const allTextareas = document.querySelectorAll('textarea');
 
@@ -166,6 +255,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const section = document.getElementById(sectionId);
         if (!section) return false; // Return false if section doesn't exist
 
+        // Special handling for Demo Smoke Tests section
+        if (sectionId === 'demoSmokeTestsContent') {
+            const platformSelect = section.querySelector('#platformSelect');
+            return platformSelect && platformSelect.value !== '';
+        }
+
         const inputs = section.querySelectorAll('input[type="text"], input[type="date"], textarea');
         let hasContent = false;
         inputs.forEach(input => {
@@ -183,7 +278,8 @@ document.addEventListener('DOMContentLoaded', function () {
         'securityConcernsContent', 
         'performanceImprovementsContent',
         'aiImpactContent', 
-        'notTestedContent'
+        'notTestedContent',
+        'demoSmokeTestsContent'
     ];
 
     // Initial check and collapse empty sections on load
@@ -230,7 +326,8 @@ document.addEventListener('DOMContentLoaded', function () {
         'securityConcernsContent', 
         'performanceImprovementsContent', 
         'aiImpactContent', 
-        'notTestedContent', 
+        'notTestedContent',
+        'demoSmokeTestsContent',
         'conclusionContent'
     ];
 
@@ -295,6 +392,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+        // Special handling for Demo Smoke Tests section - check if platform is selected
+        const demoSmokeTestsPlatformSelect = document.getElementById('platformSelect');
+        if (demoSmokeTestsPlatformSelect && demoSmokeTestsPlatformSelect.value !== '') {
+            sectionHadAnyActualContentMap['demoSmokeTestsContent'] = true;
+        }
+
 
         // 3. --- Handle Section Expansion and "No Content" Messages ---
         document.querySelectorAll('.section-content').forEach(content => {
@@ -319,6 +422,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     else if (sectionId === 'performanceImprovementsContent') sectionName = 'Performance Improvements';
                     else if (sectionId === 'aiImpactContent') sectionName = 'AI Impact';
                     else if (sectionId === 'notTestedContent') sectionName = 'Untested Items';
+                    else if (sectionId === 'demoSmokeTestsContent') sectionName = 'Demo Smoke Tests';
                     else if (sectionId === 'conclusionContent') sectionName = 'Conclusion';
 
                     const releaseVersion = releaseVersionInput ? releaseVersionInput.value.trim() : '[Release Version]';

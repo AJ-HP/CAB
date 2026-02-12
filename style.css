@@ -249,6 +249,49 @@ h2 .toggle-icon {
     display: none;
 }
 
+/* Demo Smoke Tests Section Styles */
+.smoke-test-selector {
+    margin-bottom: 15px;
+}
+
+.smoke-test-selector select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.smoke-test-selector select:focus {
+    border-color: #3d2682;
+    outline: none;
+    box-shadow: 0 0 5px rgba(61, 38, 130, 0.25);
+}
+
+.smoke-tests-list {
+    margin-top: 10px;
+}
+
+.smoke-test-platform-header {
+    color: #3d2682;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.smoke-test-items {
+    list-style-type: disc;
+    padding-left: 25px;
+    margin: 0;
+}
+
+.smoke-test-items li {
+    padding: 4px 0;
+    color: #333;
+}
+
 /* Styles for "N/A" content in print */
 .print-na-input {
     color: #888 !important;
@@ -441,6 +484,28 @@ h2 .toggle-icon {
     .button-container {
         display: none;
         /* Hide the entire button container in print */
+    }
+
+    /* Hide smoke test selector dropdown in print */
+    .smoke-test-selector {
+        display: none !important;
+    }
+
+    /* Style smoke tests list for print */
+    .smoke-tests-list {
+        margin-top: 0;
+    }
+
+    .smoke-test-platform-header {
+        margin-bottom: 5px;
+    }
+
+    .smoke-test-items {
+        margin-bottom: 5px;
+    }
+
+    .smoke-test-items li {
+        padding: 2px 0;
     }
 
     /* Ensure top fields are displayed correctly in print */
