@@ -372,6 +372,9 @@ h2 .toggle-icon {
 @media print {
     body {
         align-items: top;
+        min-height: auto;
+        padding: 0;
+        margin: 0;
     }
     .container {
         box-shadow: none;
@@ -380,6 +383,8 @@ h2 .toggle-icon {
         /* Use full width */
         position: static;
         /* Change container position to static in print */
+        margin: 0 auto;
+        padding: 20px;
     }
 
     .section-content {
