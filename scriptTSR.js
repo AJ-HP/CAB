@@ -4,29 +4,50 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- START: Textarea Auto-Resize Logic ---
     const allTextareas = document.querySelectorAll('textarea');
 
+    // Shared auto-resize function that can be called on any textarea
+    function autoResizeTextarea(textarea) {
+        if (!textarea || textarea.isResizing) return;
+        textarea.isResizing = true;
+
+        // Store current scroll position to prevent page jump
+        const scrollTop = window.pageYOffset;
+
+        // Reset height to auto to get accurate scrollHeight
+        textarea.style.height = 'auto';
+        
+        // Calculate the content height
+        const computedStyle = window.getComputedStyle(textarea);
+        const paddingTop = parseFloat(computedStyle.paddingTop) || 0;
+        const paddingBottom = parseFloat(computedStyle.paddingBottom) || 0;
+        const borderTop = parseFloat(computedStyle.borderTopWidth) || 0;
+        const borderBottom = parseFloat(computedStyle.borderBottomWidth) || 0;
+        
+        // Get the scroll height (content height)
+        let contentHeight = textarea.scrollHeight;
+        
+        // Ensure minimum height of 60px for empty or small textareas (during editing)
+        const minHeight = 60;
+        const newHeight = Math.max(contentHeight, minHeight);
+        
+        textarea.style.height = newHeight + 'px';
+
+        // Restore scroll position
+        window.scrollTo(0, scrollTop);
+        
+        textarea.isResizing = false;
+    }
+
     allTextareas.forEach(textarea => {
-        // Set a property to prevent re-triggering if an update is programmatic
         textarea.isResizing = false;
 
-        function autoResize() {
-            if (textarea.isResizing) return; // Prevent recursion if updateReleaseVersionInConclusion triggers input
-            textarea.isResizing = true;
-
-            // Temporarily reduce height to ensure scrollHeight is calculated correctly if text is deleted
-            textarea.style.height = 'auto';
-            // Set the height to the scroll height, adding a pixel or two for padding/border if necessary
-            // For most browsers, scrollHeight is sufficient.
-            textarea.style.height = textarea.scrollHeight + 'px';
-
-            textarea.isResizing = false;
-        }
-
-        textarea.addEventListener('input', autoResize, false);
+        textarea.addEventListener('input', function() {
+            autoResizeTextarea(this);
+        }, false);
 
         // Initial resize for any pre-filled textareas
-        // (especially for #conclusionText or if loaded from storage)
         if (textarea.value) {
-            autoResize();
+            // Use setTimeout to ensure DOM is fully rendered
+            setTimeout(() => autoResizeTextarea(textarea), 0);
         }
     });
     // --- END: Textarea Auto-Resize Logic ---
@@ -259,11 +280,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
 
-            // Ensure textareas are fully expanded
+            // Size textareas to their exact content height for printing
             if (input.tagName.toLowerCase() === 'textarea') {
-                input.style.height = 'auto'; 
-                input.style.height = input.scrollHeight + 'px';
-                input.style.overflowY = 'hidden'; 
+                input.style.minHeight = 'auto';
+                input.style.height = 'auto';
+                input.style.overflowY = 'visible';
+                
+                // Force layout recalculation
+                void input.offsetHeight;
+                
+                // Set to exact content height (no minimum)
+                const scrollHeight = input.scrollHeight;
+                input.style.height = scrollHeight + 'px';
             }
         });
 
@@ -337,10 +365,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     input.style.height = input._originalHeight; 
                     input.style.minHeight = input._originalMinHeight; 
                     input.style.overflowY = input._originalOverflowY; 
-                    // Trigger auto-resize again to adjust to original content
-                    if (typeof input.dispatchEvent === 'function') {
-                        input.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
-                    }
+                    
+                    // Re-apply auto-resize to restore proper height
+                    setTimeout(() => {
+                        input.style.height = 'auto';
+                        const minHeight = 60;
+                        const newHeight = Math.max(input.scrollHeight, minHeight);
+                        input.style.height = newHeight + 'px';
+                    }, 0);
                 }
             }
         });

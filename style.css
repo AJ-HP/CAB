@@ -129,11 +129,10 @@ textarea:focus {
 }
 
 textarea {
-    min-height: 150px;
-    /* Provide a reasonable default height */
-    resize: vertical;
-    /* Allow vertical resizing */
-    /* Ensure overflow is visible or auto to allow scrollHeight to be calculated correctly */
+    min-height: 60px;
+    /* Minimal default height - will auto-expand based on content */
+    resize: none;
+    /* Disable manual resize - handled dynamically by JS */
     overflow-y: hidden;
     /* This helps with the auto-resize, will be managed by JS */
 }
@@ -262,7 +261,7 @@ h2 .toggle-icon {
     gap: 20px;
     flex-wrap: wrap;
     /* Allow wrapping on smaller screens */
-    height: 10vh;
+    margin-bottom: 15px;
 }
 
 .top-field-group {
@@ -355,17 +354,24 @@ h2 .toggle-icon {
     }
 
     /* Adjust padding/margin for empty sections in print */
-    .section-content:has(.no-content-message) {
-        padding-top: 5px;
-        /* Reduced padding at the top */
-        padding-bottom: 5px;
-        /* Reduced padding at the bottom */
-        margin-top: 5px;
-        /* Reduced margin at the top */
-        margin-bottom: 5px;
-        /* Reduced margin at the bottom */
+    .section-content:has(.no-content-message[style*="display: block"]) {
+        padding-top: 2px;
+        padding-bottom: 2px;
+        margin-top: 2px;
+        margin-bottom: 2px;
         min-height: auto;
-        /* Allow height to shrink */
+    }
+
+    /* Style for the no-content message when visible */
+    .no-content-message {
+        margin: 0 !important;
+        padding: 2px 0 !important;
+    }
+
+    /* Ensure section content is compact */
+    .section-content {
+        margin-top: 5px !important;
+        margin-bottom: 5px !important;
     }
 
     .toggle-icon {
@@ -381,9 +387,12 @@ h2 .toggle-icon {
         background-color: transparent !important;
         box-shadow: none !important;
         padding: 0 !important; /* Remove input padding */
-        margin-bottom: 5px !important; /* Tighter spacing for presentation */
+        margin-bottom: 2px !important; /* Minimal spacing for presentation */
         color: #333 !important; /* Ensure content is black/dark */
         resize: none !important; /* Prevent resize handles from showing */
+        min-height: auto !important; /* Allow textarea to shrink to content */
+        height: auto !important; /* Will be set by JS based on scrollHeight */
+        overflow: visible !important; /* Ensure all text is visible */
     }
 
     label {
