@@ -61,16 +61,22 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to update release version in the conclusion text
     function updateReleaseVersionInConclusion() {
         console.log("updateReleaseVersionInConclusion called");
-        const version = releaseVersionInput ? releaseVersionInput.value.trim() : '[Insert Release Version Number/Name]';
+        const version = releaseVersionInput ? releaseVersionInput.value.trim() : '';
         console.log("Release version input value:", releaseVersionInput ? releaseVersionInput.value : 'null');
         console.log("Trimmed version:", version);
+
+        // Skip replacement if version is empty to preserve the placeholder
+        if (!version) {
+            console.log("Version is empty, skipping replacement.");
+            return;
+        }
 
         if (conclusionTextarea) {
             let currentConclusionText = conclusionTextarea.value;
             console.log("Current conclusion text:", currentConclusionText);
 
-            // Regex to match the placeholder or any existing version number
-            const versionRegex = /Release\s+\[Insert Release Version Number\/Name\]|Release\s+([\w.-]*)/i;
+            // Regex to match the placeholder or any existing version (capture everything up to " is deemed")
+            const versionRegex = /Release\s+\[Insert Release Version Number\/Name\]|Release\s+.+?(?=\s+is deemed)/i;
             conclusionTextarea.value = currentConclusionText.replace(versionRegex, `Release ${version}`);
             console.log("Conclusion text after replacing version:", conclusionTextarea.value);
 
