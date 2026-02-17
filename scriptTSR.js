@@ -39,6 +39,17 @@ document.addEventListener('DOMContentLoaded', function () {
         ],
         "Gateway For Professionals (G4P)": [
             "TBC"
+        ],
+        "Gateway For Finance (G4F)": [
+            "Login in to the system",
+            "Login out from the system",
+            "Check visibility and accessibility of the clients and backing sheets",
+            "Check access to the Client configuration ",
+            "Check the Sage product list",
+            "Import base case fee, action fee and others fees from GW2",
+            "Sorting fees by Div/Loc/Dep or types of fee group",
+            "Amend/ Move and Approved of the fee",
+            "Download the backing sheet"
         ]
     };
 
