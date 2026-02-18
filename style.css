@@ -347,6 +347,19 @@ h2 .toggle-icon {
     }
 }
 
+.retry-status {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: center;
+    display: none;
+    /* Hidden by default */
+}
+
 .message-box {
     position: fixed;
     top: 20px;
