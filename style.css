@@ -298,6 +298,10 @@ h2 .toggle-icon {
     font-style: italic !important;
 }
 
+.print-textarea-content {
+    display: none;
+}
+
 /* Flex container for top fields */
 .top-fields {
     display: flex;
@@ -454,6 +458,15 @@ h2 .toggle-icon {
         min-height: auto !important; /* Allow textarea to shrink to content */
         height: auto !important; /* Will be set by JS based on scrollHeight */
         overflow: visible !important; /* Ensure all text is visible */
+    }
+
+    .print-textarea-content {
+        display: block !important;
+        margin-bottom: 2px !important;
+        color: #333 !important;
+        white-space: pre-wrap !important;
+        overflow-wrap: break-word !important;
+        word-break: break-word !important;
     }
 
     label {

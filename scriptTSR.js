@@ -400,6 +400,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Set to exact content height (no minimum)
                 const scrollHeight = input.scrollHeight;
                 input.style.height = scrollHeight + 'px';
+
+                // Replace textarea with plain text block for print to avoid clipping in PDF output
+                const printTextBlock = document.createElement('div');
+                printTextBlock.className = 'print-textarea-content';
+                if (input.classList.contains('print-na-input')) {
+                    printTextBlock.classList.add('print-na-input');
+                }
+                printTextBlock.textContent = input.value;
+                input.insertAdjacentElement('afterend', printTextBlock);
+                input._printTextBlock = printTextBlock;
+                input.style.display = 'none';
             }
         });
 
@@ -477,6 +488,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 input.classList.remove('print-na-input'); // Remove N/A styling class
 
                 if (input.tagName.toLowerCase() === 'textarea') {
+                    if (input._printTextBlock) {
+                        input._printTextBlock.remove();
+                        input._printTextBlock = null;
+                    }
+
                     input.style.height = input._originalHeight; 
                     input.style.minHeight = input._originalMinHeight; 
                     input.style.overflowY = input._originalOverflowY; 
