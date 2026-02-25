@@ -38,7 +38,12 @@ document.addEventListener('DOMContentLoaded', function () {
             "Add availability to a clinician"
         ],
         "Gateway For Professionals (G4P)": [
-            "TBC"
+            "Log in",
+            "Registration",
+            "Book an appointment",
+            "Add availability into a schedule",
+            "Completing a report",
+            "Remove access to a case"
         ],
         "Gateway For Finance (G4F)": [
             "Login in to the system",
