@@ -55,6 +55,9 @@ document.addEventListener('DOMContentLoaded', function () {
             "Sorting fees by Div/Loc/Dep or types of fee group",
             "Amend/ Move and Approved of the fee",
             "Download the backing sheet"
+        ],
+        "IT Admin Panel": [
+            "TBC"
         ]
     };
 
