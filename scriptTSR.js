@@ -4,46 +4,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- START: Demo Smoke Tests Data ---
     // Edit this object to update platform smoke tests
     const smokeTestsData = {
-        "My Gateway (MGW)": [
-            "Login",
-            "Register new employee",
-            "Upload a document (Records of Care)",
-            "Policy document links",
-            "Cancel/change an appointment",
-            "Viewing a report (Documents Tab)"
-        ],
         "Client Portal": [
             "Log in",
             "Generate and submit both a referral and a questionnaire (Prerequisite to GW2 Item 2)",
             "View documents and reports",
             "Re-refer a rejected referral"
         ],
-        "Gateway 2 (GW2)": [
-            "Log in",
-            "Both triage and screening cases can be created (Client Portal Item 2 to be done first)",
-            "Cases Lists, sorting and filtering (larger client)",
-            "Publishing report (outcome)",
-            "Booking an appointment (1 or more types)",
-            "Closing a case (tidy up created test cases)"
-        ],
-        "Gateway Platform (GWP)": [
-            "TBC"
-        ],
-        "Workplace Support (WPS)": [
-            "TBC"
-        ],
         "Customer Management Module (CMM)": [
             "Log in",
             "Do the Tabs load correctly",
             "Add availability to a clinician"
-        ],
-        "Gateway For Professionals (G4P)": [
-            "Log in",
-            "Registration",
-            "Book an appointment",
-            "Add availability into a schedule",
-            "Completing a report",
-            "Remove access to a case"
         ],
         "Gateway For Finance (G4F)": [
             "Login in to the system",
@@ -56,9 +26,52 @@ document.addEventListener('DOMContentLoaded', function () {
             "Amend/ Move and Approved of the fee",
             "Download the backing sheet"
         ],
+        "Gateway For Professionals (G4P)": [
+            "Log in",
+            "Registration",
+            "Book an appointment",
+            "Add availability into a schedule",
+            "Completing a report",
+            "Remove access to a case"
+        ],
+        "Gateway Platform (GWP)": [
+            "TBC"
+        ],
+        "Gateway 2 (GW2)": [
+            "Log in",
+            "Both triage and screening cases can be created (Client Portal Item 2 to be done first)",
+            "Cases Lists, sorting and filtering (larger client)",
+            "Publishing report (outcome)",
+            "Booking an appointment (1 or more types)",
+            "Closing a case (tidy up created test cases)"
+        ],
         "IT Admin Panel": [
             "TBC"
-        ]
+        ],
+        "My Gateway (MGW)": [
+            "Login",
+            "Register new employee",
+            "Upload a document (Records of Care)",
+            "Policy document links",
+            "Cancel/change an appointment",
+            "Viewing a report (Documents Tab)"
+        ],
+        "STS/IDP (Client Portal): [
+            "1. Basic Authentication (Email/Password)",
+            "•	Enter email address on login page",
+            "•	System should redirect to password entry",
+            "•	Login and verify access to portal features",
+            "•	Check user permissions and profile data display correctly",
+            "",
+            "2. SSO (Single Sign-On)",
+            "•	Enter @hpit.uk email",
+            "•	System should redirect to Microsoft account login page",
+            "•	Enter your credentials",
+            "•	Then you will be redirected back to client portal",
+        ],
+        "Workplace Support (WPS)": [
+            "TBC"
+        ],
     };
 
     // --- Initialize Demo Smoke Tests Dropdown ---
