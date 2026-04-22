@@ -56,10 +56,12 @@ document.addEventListener('DOMContentLoaded', function () {
             "Cancel/change an appointment",
             "Viewing a report (Documents Tab)"
         ],
-        "STS/IDP (Client Portal): [
+        "STS/IDP (Client Portal)": [
             "1. Basic Authentication (Email/Password)",
+            "•  Register a new user",
             "•	Enter email address on login page",
             "•	System should redirect to password entry",
+            "•  Follow 'Forgot Password' workflow and reset password",
             "•	Login and verify access to portal features",
             "•	Check user permissions and profile data display correctly",
             "",
