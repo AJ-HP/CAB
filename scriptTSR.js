@@ -34,6 +34,13 @@ document.addEventListener('DOMContentLoaded', function () {
             "Completing a report",
             "Remove access to a case"
         ],
+        "Gateway Insurer Billing (GIB)": [
+            "Log in and out of the system",
+            "Sending fees from GW2",
+            "Emulate different statuses of fees",
+            "Filtering fee lines",
+            "Download invoice and remittance files"
+        ],
         "Gateway Platform (GWP)": [
             "TBC"
         ],
