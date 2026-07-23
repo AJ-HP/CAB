@@ -118,9 +118,22 @@ textarea {
     transition: border-color 0.3s ease;
 }
 
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    background-color: #fff;
+}
+
 input[type="text"]:focus,
 input[type="date"]:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
     border-color: #3d2682;
     /* Primary colour on focus */
     outline: none;
@@ -254,6 +267,11 @@ h2 .toggle-icon {
     margin-bottom: 15px;
 }
 
+.platform-print-text {
+    display: none;
+    margin: 0;
+}
+
 .smoke-test-selector select {
     width: 100%;
     padding: 10px;
@@ -324,7 +342,8 @@ h2 .toggle-icon {
 }
 
 .top-field-group input[type="text"],
-.top-field-group input[type="date"] {
+.top-field-group input[type="date"],
+.top-field-group select {
     margin-bottom: 0;
     /* Remove bottom margin from inputs in this group */
 }
@@ -447,7 +466,8 @@ h2 .toggle-icon {
     /* OVERRIDE: Force all inputs/textareas to look like plain text */
     input[type="text"],
     input[type="date"],
-    textarea {
+    textarea,
+    select {
         border: none !important;
         background-color: transparent !important;
         box-shadow: none !important;
@@ -517,9 +537,16 @@ h2 .toggle-icon {
         /* Hide the entire button container in print */
     }
 
-    /* Hide smoke test selector dropdown in print */
-    .smoke-test-selector {
+    /* Hide smoke test selector dropdown in print (legacy class and top field select) */
+    .smoke-test-selector,
+    #platformSelect {
         display: none !important;
+    }
+
+    .platform-print-text {
+        display: block !important;
+        margin-bottom: 2px !important;
+        color: #333 !important;
     }
 
     /* Style smoke tests list for print */
@@ -564,7 +591,8 @@ h2 .toggle-icon {
     }
 
     .top-field-group input[type="text"],
-    .top-field-group input[type="date"] {
+    .top-field-group input[type="date"],
+    .top-field-group select {
         margin-bottom: 0;
         /* Keep no bottom margin */
     }

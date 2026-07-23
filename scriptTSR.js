@@ -2,20 +2,34 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("DOM fully loaded and parsed"); // Log when DOM is ready
 
     // --- START: Demo Smoke Tests Data ---
-    // Edit this object to update platform smoke tests
-    const smokeTestsData = {
-        "Client Portal": [
+    // Use `selectLabel` for dropdown display and `printLabel` for the top-fields PDF display.
+    const smokeTestPlatforms = [
+        {
+            id: "cp",
+            selectLabel: "Client Portal (CP)",
+            printLabel: "CP",
+            tests: [
             "Log in",
             "Generate and submit both a referral and a questionnaire (Prerequisite to GW2 Item 2)",
             "View documents and reports",
             "Re-refer a rejected referral"
-        ],
-        "Customer Management Module (CMM)": [
+            ]
+        },
+        {
+            id: "cmm",
+            selectLabel: "Customer Management Module (CMM)",
+            printLabel: "CMM",
+            tests: [
             "Log in",
             "Do the Tabs load correctly",
             "Add availability to a clinician"
-        ],
-        "Gateway For Finance (G4F)": [
+            ]
+        },
+        {
+            id: "g4f",
+            selectLabel: "Gateway For Finance (G4F)",
+            printLabel: "G4F",
+            tests: [
             "Login in to the system",
             "Login out from the system",
             "Check visibility and accessibility of the clients and backing sheets",
@@ -25,45 +39,80 @@ document.addEventListener('DOMContentLoaded', function () {
             "Sorting fees by Div/Loc/Dep or types of fee group",
             "Amend/ Move and Approved of the fee",
             "Download the backing sheet"
-        ],
-        "Gateway For Professionals (G4P)": [
+            ]
+        },
+        {
+            id: "g4p",
+            selectLabel: "Gateway For Professionals (G4P)",
+            printLabel: "G4P",
+            tests: [
             "Log in",
             "Registration",
             "Book an appointment",
             "Add availability into a schedule",
             "Completing a report",
             "Remove access to a case"
-        ],
-        "Gateway Insurer Billing (GIB)": [
+            ]
+        },
+        {
+            id: "gib",
+            selectLabel: "Gateway Insurer Billing (GIB)",
+            printLabel: "GIB",
+            tests: [
             "Log in and out of the system",
             "Sending fees from GW2",
             "Emulate different statuses of fees",
             "Filtering fee lines",
             "Download invoice and remittance files"
-        ],
-        "Gateway Platform (GWP)": [
+            ]
+        },
+        {
+            id: "gwp",
+            selectLabel: "Gateway Platform (GWP)",
+            printLabel: "GWP",
+            tests: [
             "TBC"
-        ],
-        "Gateway 2 (GW2)": [
+            ]
+        },
+        {
+            id: "gw2",
+            selectLabel: "Gateway 2 (GW2)",
+            printLabel: "GW2",
+            tests: [
             "Log in",
             "Both triage and screening cases can be created (Client Portal Item 2 to be done first)",
             "Cases Lists, sorting and filtering (larger client)",
             "Publishing report (outcome)",
             "Booking an appointment (1 or more types)",
             "Closing a case (tidy up created test cases)"
-        ],
-        "IT Admin Panel": [
+            ]
+        },
+        {
+            id: "it-admin",
+            selectLabel: "IT Admin Panel",
+            printLabel: "IT Admin",
+            tests: [
             "TBC"
-        ],
-        "My Gateway (MGW)": [
+            ]
+        },
+        {
+            id: "mgw",
+            selectLabel: "My Gateway (MGW)",
+            printLabel: "MGW",
+            tests: [
             "Login",
             "Register new employee",
             "Upload a document (Records of Care)",
             "Policy document links",
             "Cancel/change an appointment",
             "Viewing a report (Documents Tab)"
-        ],
-        "STS/IDP (Client Portal)": [
+            ]
+        },
+        {
+            id: "sts-idp",
+            selectLabel: "STS/IDP",
+            printLabel: "STS/IDP",
+            tests: [
             "1. Basic Authentication (Email/Password)",
             "•  Register a new user",
             "•	Enter email address on login page",
@@ -77,39 +126,70 @@ document.addEventListener('DOMContentLoaded', function () {
             "•	System should redirect to Microsoft account login page",
             "•	Enter your credentials",
             "•	Then you will be redirected back to client portal",
-        ],
-        "Workplace Support (WPS)": [
+            ]
+        },
+        {
+            id: "wps",
+            selectLabel: "Workplace Support (WPS)",
+            printLabel: "WPS",
+            tests: [
             "TBC"
-        ],
-    };
+            ]
+        }
+    ];
+    const platformById = smokeTestPlatforms.reduce((acc, platform) => {
+        acc[platform.id] = platform;
+        return acc;
+    }, {});
 
-    // --- Initialize Demo Smoke Tests Dropdown ---
+    // --- Initialise Demo Smoke Tests Dropdown ---
     const platformSelect = document.getElementById('platformSelect');
+    const platformPrintText = document.getElementById('platformPrintText');
     const smokeTestsList = document.getElementById('smokeTestsList');
+
+    function updatePlatformPrintText(selectedPlatformId) {
+        if (!platformPrintText) return;
+
+        const selectedPlatform = platformById[selectedPlatformId];
+        if (selectedPlatform) {
+            platformPrintText.textContent = selectedPlatform.printLabel || selectedPlatform.selectLabel;
+            platformPrintText.classList.remove('print-na-input');
+        } else {
+            platformPrintText.textContent = 'N/A';
+            platformPrintText.classList.add('print-na-input');
+        }
+    }
+
+    function getPlatformReleasePrefix() {
+        const label = platformPrintText ? platformPrintText.textContent.trim() : '';
+        return label && label !== 'N/A' ? `${label} ` : '';
+    }
 
     if (platformSelect && smokeTestsList) {
         // Populate dropdown with platform names
-        Object.keys(smokeTestsData).forEach(platform => {
+        smokeTestPlatforms.forEach(platform => {
             const option = document.createElement('option');
-            option.value = platform;
-            option.textContent = platform;
+            option.value = platform.id;
+            option.textContent = platform.selectLabel;
             platformSelect.appendChild(option);
         });
 
         // Handle platform selection
         platformSelect.addEventListener('change', function() {
-            const selectedPlatform = this.value;
+            const selectedPlatform = platformById[this.value];
             smokeTestsList.innerHTML = '';
+            updatePlatformPrintText(this.value);
+            updateReleaseVersionInConclusion();
 
-            if (selectedPlatform && smokeTestsData[selectedPlatform]) {
+            if (selectedPlatform) {
                 const platformHeader = document.createElement('h5');
                 platformHeader.className = 'smoke-test-platform-header';
-                platformHeader.textContent = selectedPlatform;
+                platformHeader.textContent = selectedPlatform.selectLabel;
                 smokeTestsList.appendChild(platformHeader);
 
                 const testList = document.createElement('ul');
                 testList.className = 'smoke-test-items';
-                smokeTestsData[selectedPlatform].forEach(test => {
+                selectedPlatform.tests.forEach(test => {
                     const listItem = document.createElement('li');
                     listItem.textContent = test;
                     testList.appendChild(listItem);
@@ -128,6 +208,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
+
+        updatePlatformPrintText(platformSelect.value);
     }
     // --- END: Demo Smoke Tests Logic ---
 
@@ -226,9 +308,9 @@ document.addEventListener('DOMContentLoaded', function () {
             let currentConclusionText = conclusionTextarea.value;
             console.log("Current conclusion text:", currentConclusionText);
 
-            // Regex to match the placeholder or any existing version (capture everything up to " is deemed")
-            const versionRegex = /Release\s+\[Insert Release Version Number\/Name\]|Release\s+.+?(?=\s+is deemed)/i;
-            conclusionTextarea.value = currentConclusionText.replace(versionRegex, `Release ${version}`);
+            // Match and replace any prior platform prefix plus the Release token up to " is deemed".
+            const versionRegex = /(?:[A-Za-z0-9/]+\s+)*Release\s+\[Insert Release Version Number\/Name\]|(?:[A-Za-z0-9/]+\s+)*Release\s+.+?(?=\s+is deemed)/i;
+            conclusionTextarea.value = currentConclusionText.replace(versionRegex, `${getPlatformReleasePrefix()}Release ${version}`);
             console.log("Conclusion text after replacing version:", conclusionTextarea.value);
 
             // Manually trigger resize for conclusionTextarea after its content changes
@@ -298,7 +380,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Special handling for Demo Smoke Tests section
         if (sectionId === 'demoSmokeTestsContent') {
-            const platformSelect = section.querySelector('#platformSelect');
             return platformSelect && platformSelect.value !== '';
         }
 
@@ -450,6 +531,8 @@ document.addEventListener('DOMContentLoaded', function () {
             sectionHadAnyActualContentMap['demoSmokeTestsContent'] = true;
         }
 
+        updatePlatformPrintText(demoSmokeTestsPlatformSelect ? demoSmokeTestsPlatformSelect.value : '');
+
 
         // 3. --- Handle Section Expansion and "No Content" Messages ---
         document.querySelectorAll('.section-content').forEach(content => {
@@ -478,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     else if (sectionId === 'conclusionContent') sectionName = 'Conclusion';
 
                     const releaseVersion = releaseVersionInput ? releaseVersionInput.value.trim() : '[Release Version]';
-                    const message = `No ${sectionName} identified for Release ${releaseVersion}.`;
+                    const message = `No ${sectionName} identified for ${getPlatformReleasePrefix()}Release ${releaseVersion}.`;
 
                     if (messageElement) {
                         messageElement.textContent = message;
@@ -566,5 +649,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
+
+        updatePlatformPrintText(platformSelect ? platformSelect.value : '');
     });
 });
